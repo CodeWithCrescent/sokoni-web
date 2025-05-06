@@ -2,31 +2,35 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'password',
+        'role_id',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -34,15 +38,100 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+
+    /**
+     * Get the role associated with the user.
+     */
+    public function role(): BelongsTo
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Get the customer profile associated with the user.
+     */
+    public function customer(): HasOne
+    {
+        return $this->hasOne(Customer::class, 'id');
+    }
+
+    /**
+     * Get the vendor profile associated with the user.
+     */
+    public function vendor(): HasOne
+    {
+        return $this->hasOne(Vendor::class, 'id');
+    }
+
+    /**
+     * Get the delivery profile associated with the user.
+     */
+    public function deliveryPersonnel(): HasOne
+    {
+        return $this->hasOne(DeliveryPersonnel::class, 'id');
+    }
+
+    /**
+     * Get the products for the vendor user.
+     */
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    /**
+     * Get the customer orders for this user.
+     */
+    public function customerOrders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'customer_id');
+    }
+
+    /**
+     * Get the delivery orders for this user.
+     */
+    public function deliveryOrders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'delivery_id');
+    }
+
+    /**
+     * Check if user is a customer.
+     */
+    public function isCustomer(): bool
+    {
+        return $this->role->name === 'customer';
+    }
+
+    /**
+     * Check if user is a vendor.
+     */
+    public function isVendor(): bool
+    {
+        return $this->role->name === 'vendor';
+    }
+
+    /**
+     * Check if user is delivery personnel.
+     */
+    public function isDelivery(): bool
+    {
+        return $this->role->name === 'delivery';
+    }
+
+    /**
+     * Check if user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role->name === 'admin';
     }
 }
