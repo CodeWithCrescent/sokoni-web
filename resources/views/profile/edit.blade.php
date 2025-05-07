@@ -246,14 +246,16 @@
     </div>
 </x-modal>
 
+@push('styles') 
 <style>
-/* Custom toggle switch styling */
-#toggle-2fa:checked ~ .dot {
-    transform: translateX(100%);
-    background-color: #84cc16;
-}
+    /* Custom toggle switch styling */
+    #toggle-2fa:checked ~ .dot {
+        transform: translateX(100%);
+        background-color: #84cc16;
+    }
 #toggle-2fa:checked ~ .block {
     background-color: #65a30d;
 }
 </style>
+@endpush
 @endsection

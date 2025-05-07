@@ -52,6 +52,8 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    @stack('styles')
+
     <style>
         body {
             font-family: 'Space Grotesk', sans-serif;
@@ -292,5 +294,8 @@
             });
         });
     </script>
+
+    @stack('scripts')
+    
 </body>
 </html>
