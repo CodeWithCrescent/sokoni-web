@@ -48,6 +48,22 @@ class User extends Authenticatable
     ];
 
     /**
+     * Default Role to Customer for newly registered users
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::creating(function ($user) {
+            if (empty($user->role_id)) {
+                $customerRole = Role::where('name', 'customer')->first();
+                if ($customerRole) {
+                    $user->role_id = $customerRole->id;
+                }
+            }
+        });
+    }
+
+    /**
      * Get the role associated with the user.
      */
     public function role(): BelongsTo
