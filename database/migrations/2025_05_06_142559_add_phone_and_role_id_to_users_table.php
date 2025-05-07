@@ -12,7 +12,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('phone', 20)->nullable()->after('email_verified_at');
+            $table->string('phone_number', 20)->nullable()->after('email_verified_at');
+            $table->string('profile_photo_path')->nullable();
+            $table->timestamp('last_active_at')->nullable();
             $table->foreignId('role_id')->after('remember_token')->constrained();
         });
     }
@@ -23,7 +25,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('phone');
+            $table->dropColumn('phone_number');
+            $table->dropColumn('profile_photo_path');
+            $table->dropColumn('last_active_at');
             $table->dropForeign(['role_id']);
             $table->dropColumn('role_id');
         });

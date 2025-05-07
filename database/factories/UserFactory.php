@@ -18,7 +18,7 @@ class UserFactory extends Factory
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'phone' => $this->faker->phoneNumber(),
+            'phone_number' => $this->faker->phoneNumber(),
             'password' => Hash::make('password'), // Default password for testing
             'role_id' => Role::inRandomOrder()->first()->id ?? Role::factory(),
             'remember_token' => Str::random(10),
