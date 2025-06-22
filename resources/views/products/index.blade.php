@@ -33,7 +33,7 @@
                 </svg>
             </button>
 
-            <div id="filters-container" class="hidden mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div id="filters-container" class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <form method="GET" action="{{ route('products.index') }}" id="filter-form">
                     <!-- Search Input -->
                     <div class="space-y-2">
