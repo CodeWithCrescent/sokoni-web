@@ -1,4 +1,4 @@
-## SOKONI WEB SYSTEM
+## SOKONI WEB SYSTEM FOR SANJO
 
 Make DB Seeder
 ```bash
