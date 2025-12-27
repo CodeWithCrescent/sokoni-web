@@ -99,6 +99,16 @@ class User extends Authenticatable
         return $this->belongsToMany(Market::class, 'favorite_markets')->withTimestamps();
     }
 
+    public function collectedOrders(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Order::class, 'collector_id');
+    }
+
+    public function deliveredOrders(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Order::class, 'driver_id');
+    }
+
     public function hasPermission(string $permissionSlug): bool
     {
         if (!$this->role) {

@@ -18,3 +18,6 @@ export type { Order, OrderItem, OrderFilters, Payment, CreateOrderData } from '.
 
 export { analyticsApi } from './analytics';
 export type { DashboardStats, RevenueData, TopProduct, TopMarket, OrderTrend } from './analytics';
+
+export { usersApi, rolesApi, permissionsApi } from './users';
+export type { User, Role, Permission, UserFilters, CreateUserData, UpdateUserData } from './users';

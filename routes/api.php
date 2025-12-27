@@ -24,6 +24,10 @@ Route::prefix('v1')->group(function () {
         Route::post('/auth/logout', [\App\Http\Controllers\Api\V1\AuthController::class, 'logout']);
         Route::get('/auth/user', [\App\Http\Controllers\Api\V1\AuthController::class, 'user']);
 
+        // Users
+        Route::apiResource('users', \App\Http\Controllers\Api\V1\UserController::class);
+        Route::post('users/{user}/restore', [\App\Http\Controllers\Api\V1\UserController::class, 'restore']);
+
         // Roles
         Route::apiResource('roles', \App\Http\Controllers\Api\V1\RoleController::class);
         Route::post('roles/{role}/restore', [\App\Http\Controllers\Api\V1\RoleController::class, 'restore'])
@@ -110,6 +114,12 @@ Route::prefix('v1')->group(function () {
             Route::get('top-products', [\App\Http\Controllers\Api\V1\AnalyticsController::class, 'topProducts']);
             Route::get('top-markets', [\App\Http\Controllers\Api\V1\AnalyticsController::class, 'topMarkets']);
             Route::get('orders-trend', [\App\Http\Controllers\Api\V1\AnalyticsController::class, 'ordersTrend']);
+
+            // Staff Analytics
+            Route::get('staff/collectors', [\App\Http\Controllers\Api\V1\StaffAnalyticsController::class, 'collectors']);
+            Route::get('staff/drivers', [\App\Http\Controllers\Api\V1\StaffAnalyticsController::class, 'drivers']);
+            Route::get('staff/leaderboard', [\App\Http\Controllers\Api\V1\StaffAnalyticsController::class, 'leaderboard']);
+            Route::get('staff/{userId}/orders', [\App\Http\Controllers\Api\V1\StaffAnalyticsController::class, 'staffOrders']);
         });
     });
 

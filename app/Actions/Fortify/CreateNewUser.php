@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -20,6 +21,7 @@ class CreateNewUser implements CreatesNewUsers
     {
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
             'email' => [
                 'required',
                 'string',
@@ -30,10 +32,21 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
-        return User::create([
+        // Get default customer role
+        $customerRole = Role::where('is_default', true)->first()
+            ?? Role::where('slug', 'customer')->first();
+
+        $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
+            'phone' => $input['phone'] ?? null,
             'password' => $input['password'],
+            'role_id' => $customerRole?->id,
         ]);
+
+        // Create default notification preferences
+        $user->notificationPreference()->create([]);
+
+        return $user;
     }
 }

@@ -8,12 +8,14 @@ use App\Models\MarketProduct;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Unit;
+use App\Models\User;
 use App\Policies\MarketCategoryPolicy;
 use App\Policies\MarketPolicy;
 use App\Policies\MarketProductPolicy;
 use App\Policies\ProductCategoryPolicy;
 use App\Policies\ProductPolicy;
 use App\Policies\UnitPolicy;
+use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -38,5 +40,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(MarketCategory::class, MarketCategoryPolicy::class);
         Gate::policy(Market::class, MarketPolicy::class);
         Gate::policy(MarketProduct::class, MarketProductPolicy::class);
+        Gate::policy(User::class, UserPolicy::class);
     }
 }

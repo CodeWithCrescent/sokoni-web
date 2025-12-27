@@ -55,6 +55,8 @@ class RoleSeeder extends Seeder
             'products.view',
             'markets.view',
             'market-products.view',
+            'orders.view',
+            'orders.update-status',
         ])->pluck('id')->toArray();
         $collector->syncPermissions($collectorPermissions);
 
@@ -69,7 +71,29 @@ class RoleSeeder extends Seeder
         );
         $driverPermissions = Permission::whereIn('slug', [
             'dashboard.view',
+            'orders.view',
+            'orders.update-status',
         ])->pluck('id')->toArray();
         $driver->syncPermissions($driverPermissions);
+
+        // Market Manager role
+        $marketManager = Role::updateOrCreate(
+            ['slug' => 'market-manager'],
+            [
+                'name' => 'Market Manager',
+                'description' => 'Manages market inventory and pricing',
+                'is_default' => false,
+            ]
+        );
+        $marketManagerPermissions = Permission::whereIn('slug', [
+            'dashboard.view',
+            'products.view',
+            'markets.view',
+            'market-products.view',
+            'market-products.create',
+            'market-products.edit',
+            'orders.view',
+        ])->pluck('id')->toArray();
+        $marketManager->syncPermissions($marketManagerPermissions);
     }
 }

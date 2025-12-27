@@ -4,11 +4,28 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
+// Public Storefront Routes
 Route::get('/', function () {
+    return Inertia::render('storefront/home');
+})->name('home');
+
+Route::get('/shop', function () {
+    return Inertia::render('storefront/shop');
+})->name('shop');
+
+Route::get('/cart', function () {
+    return Inertia::render('storefront/cart');
+})->name('cart');
+
+Route::get('/markets', function () {
+    return Inertia::render('storefront/markets');
+})->name('storefront.markets');
+
+Route::get('/welcome', function () {
     return Inertia::render('welcome', [
         'canRegister' => Features::enabled(Features::registration()),
     ]);
-})->name('home');
+})->name('welcome');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
@@ -36,6 +53,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('orders', function () {
             return Inertia::render('admin/orders/index');
         })->name('orders.index');
+
+        Route::get('users', function () {
+            return Inertia::render('admin/users/index');
+        })->name('users.index');
+
+        Route::get('users/create', function () {
+            return Inertia::render('admin/users/form');
+        })->name('users.create');
+
+        Route::get('users/{userId}/edit', function ($userId) {
+            return Inertia::render('admin/users/form', ['userId' => (int) $userId]);
+        })->name('users.edit');
+
+        Route::get('roles', function () {
+            return Inertia::render('admin/roles/index');
+        })->name('roles.index');
     });
 });
 
