@@ -54,6 +54,10 @@ Route::prefix('v1')->group(function () {
         Route::post('products/{product}/photos', [\App\Http\Controllers\Api\V1\ProductController::class, 'uploadPhoto']);
         Route::delete('products/{product}/photos/{photo}', [\App\Http\Controllers\Api\V1\ProductController::class, 'deletePhoto']);
 
+        // Upload
+        Route::post('upload/image', [\App\Http\Controllers\Api\V1\UploadController::class, 'uploadImage']);
+        Route::post('upload/file', [\App\Http\Controllers\Api\V1\UploadController::class, 'uploadFile']);
+
         // Market Categories
         Route::apiResource('market-categories', \App\Http\Controllers\Api\V1\MarketCategoryController::class);
         Route::post('market-categories/{market_category}/restore', [\App\Http\Controllers\Api\V1\MarketCategoryController::class, 'restore'])

@@ -13,7 +13,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, LayoutGrid, Package, Ruler, Store, Tags, ShoppingCart, Users, Shield } from 'lucide-react';
+import { BookOpen, LayoutGrid, Package, Ruler, Store, Tags, ShoppingCart, Users, Shield, Settings, ChevronDown } from 'lucide-react';
 import AppLogo from './app-logo';
 
 function usePermissions() {
@@ -40,22 +40,32 @@ function getNavItems(hasPermission: (p: string) => boolean, isAdmin: boolean): N
         },
     ];
 
+    // Configuration Section
+    const configurationItems: NavItem[] = [];
     if (hasPermission('product-categories.view')) {
-        items.push({
+        configurationItems.push({
             title: 'Product Categories',
             href: '/admin/product-categories',
             icon: Tags,
         });
     }
-
     if (hasPermission('units.view')) {
-        items.push({
+        configurationItems.push({
             title: 'Units',
             href: '/admin/units',
             icon: Ruler,
         });
     }
 
+    if (configurationItems.length > 0) {
+        items.push({
+            title: 'Configuration',
+            icon: Settings,
+            items: configurationItems,
+        });
+    }
+
+    // Core Business Items
     if (hasPermission('products.view')) {
         items.push({
             title: 'Products',
@@ -80,19 +90,28 @@ function getNavItems(hasPermission: (p: string) => boolean, isAdmin: boolean): N
         });
     }
 
+    // User Management Section
+    const userManagementItems: NavItem[] = [];
     if (hasPermission('users.view')) {
-        items.push({
+        userManagementItems.push({
             title: 'Users',
             href: '/admin/users',
             icon: Users,
         });
     }
-
     if (hasPermission('roles.view')) {
-        items.push({
+        userManagementItems.push({
             title: 'Roles',
             href: '/admin/roles',
             icon: Shield,
+        });
+    }
+
+    if (userManagementItems.length > 0) {
+        items.push({
+            title: 'User Management',
+            icon: Users,
+            items: userManagementItems,
         });
     }
 

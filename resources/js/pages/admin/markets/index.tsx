@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { ImageUpload } from '@/components/ui/image-upload';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
     Dialog,
@@ -49,7 +50,7 @@ export default function MarketsIndex() {
     const [formOpen, setFormOpen] = useState(false);
     const [editingMarket, setEditingMarket] = useState<Market | null>(null);
     const [marketCategories, setMarketCategories] = useState<MarketCategory[]>([]);
-    const [formData, setFormData] = useState({ name: '', slug: '', address: '', description: '', opening_time: '06:00', closing_time: '18:00', is_active: true, category_id: '' });
+    const [formData, setFormData] = useState({ name: '', slug: '', address: '', description: '', opening_time: '06:00', closing_time: '18:00', is_active: true, category_id: '', photo: '', cover_photo: '' });
     const [isSaving, setIsSaving] = useState(false);
     const hasFetched = useRef(false);
 
@@ -64,7 +65,7 @@ export default function MarketsIndex() {
 
     const openCreateForm = () => {
         setEditingMarket(null);
-        setFormData({ name: '', slug: '', address: '', description: '', opening_time: '06:00', closing_time: '18:00', is_active: true, category_id: '' });
+        setFormData({ name: '', slug: '', address: '', description: '', opening_time: '06:00', closing_time: '18:00', is_active: true, category_id: '', photo: '', cover_photo: '' });
         fetchMarketCategories();
         setFormOpen(true);
     };
@@ -76,6 +77,7 @@ export default function MarketsIndex() {
             description: market.description || '', opening_time: '06:00',
             closing_time: '18:00', is_active: market.is_active,
             category_id: market.category?.id?.toString() || '',
+            photo: market.photo || '', cover_photo: market.cover_photo || '',
         });
         fetchMarketCategories();
         setFormOpen(true);
@@ -348,6 +350,22 @@ export default function MarketsIndex() {
                             <div className="space-y-2">
                                 <Label htmlFor="description">Description</Label>
                                 <Textarea id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={2} />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label>Photo</Label>
+                                    <ImageUpload
+                                        value={formData.photo}
+                                        onChange={(url) => setFormData({ ...formData, photo: url || '' })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Cover Photo</Label>
+                                    <ImageUpload
+                                        value={formData.cover_photo}
+                                        onChange={(url) => setFormData({ ...formData, cover_photo: url || '' })}
+                                    />
+                                </div>
                             </div>
                             <div className="flex items-center gap-3">
                                 <Switch id="is_active" checked={formData.is_active} onCheckedChange={(c: boolean) => setFormData({ ...formData, is_active: c })} />
