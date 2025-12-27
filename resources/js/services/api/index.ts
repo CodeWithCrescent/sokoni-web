@@ -12,3 +12,6 @@ export type { Product, ProductFilters, ProductPhoto } from './products';
 
 export { marketCategoriesApi, marketsApi } from './markets';
 export type { Market, MarketCategory, MarketFilters } from './markets';
+
+export { ordersApi, paymentsApi } from './orders';
+export type { Order, OrderItem, OrderFilters, Payment, CreateOrderData } from './orders';

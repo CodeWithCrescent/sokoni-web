@@ -32,6 +32,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('markets', function () {
             return Inertia::render('admin/markets/index');
         })->name('markets.index');
+
+        Route::get('orders', function () {
+            return Inertia::render('admin/orders/index');
+        })->name('orders.index');
     });
 });
 
