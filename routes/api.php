@@ -68,7 +68,23 @@ Route::prefix('v1')->group(function () {
         // Audit Logs
         Route::get('audit-logs', [\App\Http\Controllers\Api\V1\AuditLogController::class, 'index']);
         Route::get('audit-logs/{audit_log}', [\App\Http\Controllers\Api\V1\AuditLogController::class, 'show']);
+
+        // Orders
+        Route::get('orders/my-orders', [\App\Http\Controllers\Api\V1\OrderController::class, 'myOrders']);
+        Route::apiResource('orders', \App\Http\Controllers\Api\V1\OrderController::class)->only(['index', 'store', 'show']);
+        Route::put('orders/{order}/status', [\App\Http\Controllers\Api\V1\OrderController::class, 'updateStatus']);
+        Route::post('orders/{order}/assign-collector', [\App\Http\Controllers\Api\V1\OrderController::class, 'assignCollector']);
+        Route::post('orders/{order}/assign-driver', [\App\Http\Controllers\Api\V1\OrderController::class, 'assignDriver']);
+
+        // Payments
+        Route::post('payments/initiate', [\App\Http\Controllers\Api\V1\PaymentController::class, 'initiate']);
+        Route::get('payments/{payment}', [\App\Http\Controllers\Api\V1\PaymentController::class, 'show']);
+        Route::post('payments/{payment}/confirm', [\App\Http\Controllers\Api\V1\PaymentController::class, 'confirmCashPayment']);
+        Route::get('payments/order/{orderId}', [\App\Http\Controllers\Api\V1\PaymentController::class, 'forOrder']);
     });
+
+    // Payment callback (public)
+    Route::post('payments/callback', [\App\Http\Controllers\Api\V1\PaymentController::class, 'callback']);
 
     // Public browsing API for customers
     Route::prefix('browse')->group(function () {

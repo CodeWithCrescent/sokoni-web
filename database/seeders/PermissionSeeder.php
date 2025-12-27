@@ -79,6 +79,26 @@ class PermissionSeeder extends Seeder
             // Dashboard
             ['name' => 'View Dashboard', 'slug' => 'dashboard.view', 'group' => 'dashboard'],
             ['name' => 'View Analytics', 'slug' => 'dashboard.analytics', 'group' => 'dashboard'],
+
+            // Orders
+            ['name' => 'View Orders', 'slug' => 'orders.view', 'group' => 'orders'],
+            ['name' => 'Create Orders', 'slug' => 'orders.create', 'group' => 'orders'],
+            ['name' => 'Edit Orders', 'slug' => 'orders.edit', 'group' => 'orders'],
+            ['name' => 'Cancel Orders', 'slug' => 'orders.cancel', 'group' => 'orders'],
+            ['name' => 'Assign Collector', 'slug' => 'orders.assign-collector', 'group' => 'orders'],
+            ['name' => 'Assign Driver', 'slug' => 'orders.assign-driver', 'group' => 'orders'],
+            ['name' => 'Update Order Status', 'slug' => 'orders.update-status', 'group' => 'orders'],
+
+            // Payments
+            ['name' => 'View Payments', 'slug' => 'payments.view', 'group' => 'payments'],
+            ['name' => 'Confirm Cash Payments', 'slug' => 'payments.confirm', 'group' => 'payments'],
+            ['name' => 'Refund Payments', 'slug' => 'payments.refund', 'group' => 'payments'],
+
+            // Delivery Zones
+            ['name' => 'View Delivery Zones', 'slug' => 'delivery-zones.view', 'group' => 'delivery-zones'],
+            ['name' => 'Create Delivery Zones', 'slug' => 'delivery-zones.create', 'group' => 'delivery-zones'],
+            ['name' => 'Edit Delivery Zones', 'slug' => 'delivery-zones.edit', 'group' => 'delivery-zones'],
+            ['name' => 'Delete Delivery Zones', 'slug' => 'delivery-zones.delete', 'group' => 'delivery-zones'],
         ];
 
         foreach ($permissions as $permission) {
