@@ -15,3 +15,6 @@ export type { Market, MarketCategory, MarketFilters } from './markets';
 
 export { ordersApi, paymentsApi } from './orders';
 export type { Order, OrderItem, OrderFilters, Payment, CreateOrderData } from './orders';
+
+export { analyticsApi } from './analytics';
+export type { DashboardStats, RevenueData, TopProduct, TopMarket, OrderTrend } from './analytics';

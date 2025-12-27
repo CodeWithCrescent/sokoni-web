@@ -81,6 +81,36 @@ Route::prefix('v1')->group(function () {
         Route::get('payments/{payment}', [\App\Http\Controllers\Api\V1\PaymentController::class, 'show']);
         Route::post('payments/{payment}/confirm', [\App\Http\Controllers\Api\V1\PaymentController::class, 'confirmCashPayment']);
         Route::get('payments/order/{orderId}', [\App\Http\Controllers\Api\V1\PaymentController::class, 'forOrder']);
+
+        // Cart
+        Route::get('cart', [\App\Http\Controllers\Api\V1\CartController::class, 'index']);
+        Route::post('cart/add', [\App\Http\Controllers\Api\V1\CartController::class, 'addItem']);
+        Route::put('cart/items/{itemId}', [\App\Http\Controllers\Api\V1\CartController::class, 'updateItem']);
+        Route::delete('cart/items/{itemId}', [\App\Http\Controllers\Api\V1\CartController::class, 'removeItem']);
+        Route::delete('cart/{cartId}', [\App\Http\Controllers\Api\V1\CartController::class, 'clear']);
+
+        // Addresses
+        Route::get('addresses', [\App\Http\Controllers\Api\V1\AddressController::class, 'index']);
+        Route::post('addresses', [\App\Http\Controllers\Api\V1\AddressController::class, 'store']);
+        Route::put('addresses/{id}', [\App\Http\Controllers\Api\V1\AddressController::class, 'update']);
+        Route::delete('addresses/{id}', [\App\Http\Controllers\Api\V1\AddressController::class, 'destroy']);
+        Route::post('addresses/{id}/default', [\App\Http\Controllers\Api\V1\AddressController::class, 'setDefault']);
+
+        // Notifications
+        Route::get('notifications', [\App\Http\Controllers\Api\V1\NotificationController::class, 'index']);
+        Route::get('notifications/unread-count', [\App\Http\Controllers\Api\V1\NotificationController::class, 'unreadCount']);
+        Route::post('notifications/{id}/read', [\App\Http\Controllers\Api\V1\NotificationController::class, 'markAsRead']);
+        Route::post('notifications/read-all', [\App\Http\Controllers\Api\V1\NotificationController::class, 'markAllAsRead']);
+        Route::delete('notifications/{id}', [\App\Http\Controllers\Api\V1\NotificationController::class, 'destroy']);
+
+        // Analytics (Admin)
+        Route::prefix('analytics')->group(function () {
+            Route::get('dashboard', [\App\Http\Controllers\Api\V1\AnalyticsController::class, 'dashboard']);
+            Route::get('revenue', [\App\Http\Controllers\Api\V1\AnalyticsController::class, 'revenue']);
+            Route::get('top-products', [\App\Http\Controllers\Api\V1\AnalyticsController::class, 'topProducts']);
+            Route::get('top-markets', [\App\Http\Controllers\Api\V1\AnalyticsController::class, 'topMarkets']);
+            Route::get('orders-trend', [\App\Http\Controllers\Api\V1\AnalyticsController::class, 'ordersTrend']);
+        });
     });
 
     // Payment callback (public)
