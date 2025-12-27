@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { ImageUpload } from '@/components/ui/image-upload';
 import {
     Dialog,
     DialogContent,
@@ -55,7 +56,7 @@ export default function ProductsIndex() {
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [categories, setCategories] = useState<ProductCategory[]>([]);
     const [units, setUnits] = useState<Unit[]>([]);
-    const [formData, setFormData] = useState({ name: '', slug: '', description: '', category_id: '', unit_id: '', is_active: true });
+    const [formData, setFormData] = useState({ name: '', slug: '', description: '', category_id: '', unit_id: '', is_active: true, image: '' });
     const [isSaving, setIsSaving] = useState(false);
     const hasFetched = useRef(false);
 
@@ -125,7 +126,7 @@ export default function ProductsIndex() {
 
     const openCreateForm = () => {
         setEditingProduct(null);
-        setFormData({ name: '', slug: '', description: '', category_id: '', unit_id: '', is_active: true });
+        setFormData({ name: '', slug: '', description: '', category_id: '', unit_id: '', is_active: true, image: '' });
         fetchFormData();
         setFormOpen(true);
     };
@@ -139,6 +140,7 @@ export default function ProductsIndex() {
             category_id: product.category?.id?.toString() || '',
             unit_id: product.unit?.id?.toString() || '',
             is_active: product.is_active,
+            image: product.primary_photo?.photo_url || '',
         });
         fetchFormData();
         setFormOpen(true);
@@ -340,6 +342,13 @@ export default function ProductsIndex() {
                             <div className="space-y-2">
                                 <Label htmlFor="description">Description</Label>
                                 <Textarea id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={2} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Product Image</Label>
+                                <ImageUpload
+                                    value={formData.image}
+                                    onChange={(url) => setFormData({ ...formData, image: url || '' })}
+                                />
                             </div>
                             <div className="flex items-center gap-3">
                                 <Switch id="is_active" checked={formData.is_active} onCheckedChange={(c: boolean) => setFormData({ ...formData, is_active: c })} />

@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { ImageUpload } from '@/components/ui/image-upload';
 import {
     Dialog,
     DialogContent,
@@ -46,7 +47,7 @@ export default function ProductCategoriesIndex() {
     const [isRestoring, setIsRestoring] = useState(false);
     const [formOpen, setFormOpen] = useState(false);
     const [editingCategory, setEditingCategory] = useState<ProductCategory | null>(null);
-    const [formData, setFormData] = useState({ name: '', slug: '', description: '', is_active: true });
+    const [formData, setFormData] = useState({ name: '', slug: '', description: '', is_active: true, image: '' });
     const [isSaving, setIsSaving] = useState(false);
     const hasFetched = useRef(false);
 
@@ -106,7 +107,7 @@ export default function ProductCategoriesIndex() {
 
     const openCreateForm = () => {
         setEditingCategory(null);
-        setFormData({ name: '', slug: '', description: '', is_active: true });
+        setFormData({ name: '', slug: '', description: '', is_active: true, image: '' });
         setFormOpen(true);
     };
 
@@ -117,6 +118,7 @@ export default function ProductCategoriesIndex() {
             slug: category.slug,
             description: category.description || '',
             is_active: category.is_active,
+            image: category.image || '',
         });
         setFormOpen(true);
     };
@@ -319,6 +321,13 @@ export default function ProductCategoriesIndex() {
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     placeholder="Brief description"
                                     rows={3}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Category Image</Label>
+                                <ImageUpload
+                                    value={formData.image}
+                                    onChange={(url) => setFormData({ ...formData, image: url || '' })}
                                 />
                             </div>
                             <div className="flex items-center gap-3">
