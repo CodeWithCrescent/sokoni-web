@@ -32,6 +32,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
+    // Customer Portal Routes
+    Route::get('my-orders', function () {
+        return Inertia::render('customer/orders/index');
+    })->name('customer.orders');
+
+    Route::get('my-orders/{orderId}', function ($orderId) {
+        return Inertia::render('customer/orders/show', ['orderId' => (int) $orderId]);
+    })->name('customer.orders.show');
+
+    Route::get('checkout', function () {
+        return Inertia::render('customer/checkout');
+    })->name('checkout');
+
     // Admin Routes
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('product-categories', function () {
