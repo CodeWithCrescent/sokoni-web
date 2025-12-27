@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Head } from '@inertiajs/react';
-import { MoreHorizontal, Plus, RotateCcw, Trash2, Pencil } from 'lucide-react';
+import { MoreHorizontal, Plus, RotateCcw, Trash2, Pencil, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 
 import AppLayout from '@/layouts/app-layout';
@@ -29,6 +29,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { marketsApi, marketCategoriesApi, Market, MarketCategory } from '@/services/api';
+import { Link } from '@inertiajs/react';
 
 const breadcrumbs = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -189,7 +190,7 @@ export default function MarketsIndex() {
         {
             accessorKey: 'min_order_amount',
             header: 'Min Order',
-            cell: ({ row }) => `KES ${Number(row.original.min_order_amount).toLocaleString()}`,
+            cell: ({ row }) => `TZS ${Number(row.original.min_order_amount).toLocaleString()}`,
         },
         {
             accessorKey: 'products_count',
@@ -216,6 +217,12 @@ export default function MarketsIndex() {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
+                        <DropdownMenuItem asChild>
+                            <Link href={`/admin/markets/${row.original.id}`}>
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Products
+                            </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => openEditForm(row.original)}>
                             <Pencil className="mr-2 h-4 w-4" />
                             Edit

@@ -91,6 +91,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return Inertia::render('admin/markets/form');
         })->name('markets.create');
 
+        Route::get('markets/{marketId}', [App\Http\Controllers\Admin\MarketController::class, 'show'])->name('markets.show');
+
         Route::get('markets/{marketId}/edit', function ($marketId) {
             return Inertia::render('admin/markets/form', ['marketId' => (int) $marketId]);
         })->name('markets.edit');

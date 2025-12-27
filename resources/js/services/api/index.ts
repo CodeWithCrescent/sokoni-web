@@ -21,3 +21,6 @@ export type { DashboardStats, RevenueData, TopProduct, TopMarket, OrderTrend } f
 
 export { usersApi, rolesApi, permissionsApi } from './users';
 export type { User, Role, Permission, UserFilters, CreateUserData, UpdateUserData } from './users';
+
+export { marketProductsApi } from './marketProducts';
+export type { MarketProduct, MarketProductPrice, MarketProductFilters, CreateMarketProductData, UpdateMarketProductData } from './marketProducts';
