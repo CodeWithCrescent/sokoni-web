@@ -15,7 +15,7 @@ class StoreMarketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category_id' => ['required', 'exists:market_categories,id'],
+            'category_id' => ['nullable', 'exists:market_categories,id'],
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'unique:markets,slug'],
             'description' => ['nullable', 'string'],

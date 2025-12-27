@@ -16,7 +16,7 @@ class UpdateMarketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category_id' => ['sometimes', 'required', 'exists:market_categories,id'],
+            'category_id' => ['sometimes', 'nullable', 'exists:market_categories,id'],
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', Rule::unique('markets', 'slug')->ignore($this->route('market'))],
             'description' => ['nullable', 'string'],

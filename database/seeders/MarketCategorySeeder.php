@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\ProductCategory;
+use App\Models\MarketCategory;
 use Illuminate\Database\Seeder;
 
 class MarketCategorySeeder extends Seeder
@@ -12,7 +12,7 @@ class MarketCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        $localMarketCategory = ProductCategory::updateOrCreate(
+        $localMarketCategory = MarketCategory::updateOrCreate(
             ['slug' => 'local-market'],
             [
                 'name' => 'Local Market',

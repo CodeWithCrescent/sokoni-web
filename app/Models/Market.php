@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\ProductCategory;
+use App\Models\MarketCategory;
 
 class Market extends Model
 {
@@ -20,7 +20,7 @@ class Market extends Model
 
         static::creating(function ($market) {
             if (!$market->category_id) {
-                $localMarketCategory = ProductCategory::where('slug', 'local-market')->first();
+                $localMarketCategory = MarketCategory::where('slug', 'local-market')->first();
                 if ($localMarketCategory) {
                     $market->category_id = $localMarketCategory->id;
                 }

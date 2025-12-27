@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
     Dialog,
     DialogContent,
@@ -27,7 +28,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { marketsApi, Market } from '@/services/api';
+import { marketsApi, marketCategoriesApi, Market, MarketCategory } from '@/services/api';
 
 const breadcrumbs = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -46,13 +47,24 @@ export default function MarketsIndex() {
     const [isRestoring, setIsRestoring] = useState(false);
     const [formOpen, setFormOpen] = useState(false);
     const [editingMarket, setEditingMarket] = useState<Market | null>(null);
-    const [formData, setFormData] = useState({ name: '', slug: '', address: '', description: '', opening_time: '06:00', closing_time: '18:00', is_active: true });
+    const [marketCategories, setMarketCategories] = useState<MarketCategory[]>([]);
+    const [formData, setFormData] = useState({ name: '', slug: '', address: '', description: '', opening_time: '06:00', closing_time: '18:00', is_active: true, category_id: '' });
     const [isSaving, setIsSaving] = useState(false);
     const hasFetched = useRef(false);
 
+    const fetchMarketCategories = async () => {
+        try {
+            const response = await marketCategoriesApi.list();
+            setMarketCategories(response.data.data);
+        } catch (error) {
+            toast.error('Failed to load market categories');
+        }
+    };
+
     const openCreateForm = () => {
         setEditingMarket(null);
-        setFormData({ name: '', slug: '', address: '', description: '', opening_time: '06:00', closing_time: '18:00', is_active: true });
+        setFormData({ name: '', slug: '', address: '', description: '', opening_time: '06:00', closing_time: '18:00', is_active: true, category_id: '' });
+        fetchMarketCategories();
         setFormOpen(true);
     };
 
@@ -60,9 +72,11 @@ export default function MarketsIndex() {
         setEditingMarket(market);
         setFormData({
             name: market.name, slug: market.slug, address: market.address || '',
-            description: market.description || '', opening_time: market.opening_time || '06:00',
-            closing_time: market.closing_time || '18:00', is_active: market.is_active,
+            description: market.description || '', opening_time: '06:00',
+            closing_time: '18:00', is_active: market.is_active,
+            category_id: market.category?.id?.toString() || '',
         });
+        fetchMarketCategories();
         setFormOpen(true);
     };
 
@@ -72,11 +86,16 @@ export default function MarketsIndex() {
         e.preventDefault();
         setIsSaving(true);
         try {
+            const data: any = { ...formData };
+            if (data.category_id) {
+                data.category_id = parseInt(data.category_id);
+            }
+            
             if (editingMarket) {
-                await marketsApi.update(editingMarket.id, formData);
+                await marketsApi.update(editingMarket.id, data);
                 toast.success('Market updated successfully');
             } else {
-                await marketsApi.create(formData);
+                await marketsApi.create(data);
                 toast.success('Market created successfully');
             }
             setFormOpen(false);
@@ -297,6 +316,17 @@ export default function MarketsIndex() {
                             <div className="space-y-2">
                                 <Label htmlFor="address">Address</Label>
                                 <Input id="address" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} required />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Category</Label>
+                                <Select value={formData.category_id} onValueChange={(v) => setFormData({ ...formData, category_id: v })}>
+                                    <SelectTrigger><SelectValue placeholder="Select category (optional)" /></SelectTrigger>
+                                    <SelectContent>
+                                        {marketCategories.map((c) => (
+                                            <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
