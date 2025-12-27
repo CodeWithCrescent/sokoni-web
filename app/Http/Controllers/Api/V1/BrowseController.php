@@ -42,7 +42,7 @@ class BrowseController extends ApiController
 
         $products = $query->orderBy('name')->paginate($request->integer('per_page', 15));
 
-        return $this->paginatedResponse($products, ProductResource);
+        return $this->paginatedResponse($products, ProductResource::class);
     }
 
     /**
@@ -94,7 +94,7 @@ class BrowseController extends ApiController
 
         $markets = $query->orderBy('name')->paginate($request->integer('per_page', 15));
 
-        return $this->paginatedResponse($markets, MarketResource);
+        return $this->paginatedResponse($markets, MarketResource::class);
     }
 
     /**
@@ -147,7 +147,7 @@ class BrowseController extends ApiController
 
         $products = $query->paginate($request->integer('per_page', 15));
 
-        return $this->paginatedResponse($products, MarketProductResource);
+        return $this->paginatedResponse($products, MarketProductResource::class);
     }
 
     /**

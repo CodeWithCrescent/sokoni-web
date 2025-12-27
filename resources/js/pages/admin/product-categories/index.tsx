@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Head, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { MoreHorizontal, Trash2, RotateCcw, Plus, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -11,6 +11,16 @@ import { PageHeader } from '@/components/ui/page-header';
 import { BadgeStatus, BadgeDeleted } from '@/components/ui/badge-status';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from '@/components/ui/dialog';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -34,6 +44,10 @@ export default function ProductCategoriesIndex() {
     const [restoreId, setRestoreId] = useState<number | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isRestoring, setIsRestoring] = useState(false);
+    const [formOpen, setFormOpen] = useState(false);
+    const [editingCategory, setEditingCategory] = useState<ProductCategory | null>(null);
+    const [formData, setFormData] = useState({ name: '', slug: '', description: '', is_active: true });
+    const [isSaving, setIsSaving] = useState(false);
     const hasFetched = useRef(false);
 
     const fetchCategories = async () => {
@@ -90,6 +104,55 @@ export default function ProductCategoriesIndex() {
         }
     };
 
+    const openCreateForm = () => {
+        setEditingCategory(null);
+        setFormData({ name: '', slug: '', description: '', is_active: true });
+        setFormOpen(true);
+    };
+
+    const openEditForm = (category: ProductCategory) => {
+        setEditingCategory(category);
+        setFormData({
+            name: category.name,
+            slug: category.slug,
+            description: category.description || '',
+            is_active: category.is_active,
+        });
+        setFormOpen(true);
+    };
+
+    const generateSlug = (name: string) => {
+        return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    };
+
+    const handleNameChange = (name: string) => {
+        setFormData({
+            ...formData,
+            name,
+            slug: editingCategory ? formData.slug : generateSlug(name),
+        });
+    };
+
+    const handleFormSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSaving(true);
+        try {
+            if (editingCategory) {
+                await productCategoriesApi.update(editingCategory.id, formData);
+                toast.success('Category updated successfully');
+            } else {
+                await productCategoriesApi.create(formData);
+                toast.success('Category created successfully');
+            }
+            setFormOpen(false);
+            fetchCategories();
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || 'Failed to save category');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     const columns: ColumnDef<ProductCategory>[] = [
         {
             accessorKey: 'name',
@@ -139,7 +202,7 @@ export default function ProductCategoriesIndex() {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => router.visit(`/admin/product-categories/${row.original.id}/edit`)}>
+                        <DropdownMenuItem onClick={() => openEditForm(row.original)}>
                             <Pencil className="mr-2 h-4 w-4" />
                             Edit
                         </DropdownMenuItem>
@@ -171,7 +234,7 @@ export default function ProductCategoriesIndex() {
                     title="Product Categories"
                     description="Manage product categories for your marketplace"
                     actions={
-                        <Button onClick={() => router.visit('/admin/product-categories/create')}>
+                        <Button onClick={openCreateForm}>
                             <Plus className="mr-2 h-4 w-4" />
                             Add Category
                         </Button>
@@ -219,6 +282,64 @@ export default function ProductCategoriesIndex() {
                     onConfirm={handleRestore}
                     isLoading={isRestoring}
                 />
+
+                <Dialog open={formOpen} onOpenChange={setFormOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>
+                                {editingCategory ? 'Edit Category' : 'Create Category'}
+                            </DialogTitle>
+                        </DialogHeader>
+                        <form onSubmit={handleFormSubmit} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="name">Name</Label>
+                                <Input
+                                    id="name"
+                                    value={formData.name}
+                                    onChange={(e) => handleNameChange(e.target.value)}
+                                    placeholder="e.g., Vegetables"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="slug">Slug</Label>
+                                <Input
+                                    id="slug"
+                                    value={formData.slug}
+                                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                                    placeholder="e.g., vegetables"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="description">Description</Label>
+                                <Textarea
+                                    id="description"
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    placeholder="Brief description"
+                                    rows={3}
+                                />
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <Switch
+                                    id="is_active"
+                                    checked={formData.is_active}
+                                    onCheckedChange={(checked: boolean) => setFormData({ ...formData, is_active: checked })}
+                                />
+                                <Label htmlFor="is_active">Active</Label>
+                            </div>
+                            <DialogFooter>
+                                <Button type="button" variant="outline" onClick={() => setFormOpen(false)}>
+                                    Cancel
+                                </Button>
+                                <Button type="submit" disabled={isSaving}>
+                                    {isSaving ? 'Saving...' : editingCategory ? 'Update' : 'Create'}
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
             </div>
         </AppLayout>
     );

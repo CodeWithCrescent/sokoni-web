@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Head, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { Plus, MoreHorizontal, Pencil, Trash2, RotateCcw, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -10,7 +10,16 @@ import { DataTable } from '@/components/ui/data-table';
 import { PageHeader } from '@/components/ui/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from '@/components/ui/dialog';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -40,6 +49,10 @@ export default function UsersIndex() {
     const [page, setPage] = useState(0);
     const [pageCount, setPageCount] = useState(1);
     const [deleteId, setDeleteId] = useState<number | null>(null);
+    const [formOpen, setFormOpen] = useState(false);
+    const [editingUser, setEditingUser] = useState<User | null>(null);
+    const [formData, setFormData] = useState({ name: '', email: '', phone: '', password: '', role_id: '', is_active: true });
+    const [isSaving, setIsSaving] = useState(false);
     const hasFetched = useRef(false);
 
     const fetchUsers = async () => {
@@ -104,6 +117,49 @@ export default function UsersIndex() {
         }
     };
 
+    const openCreateForm = () => {
+        setEditingUser(null);
+        setFormData({ name: '', email: '', phone: '', password: '', role_id: '', is_active: true });
+        setFormOpen(true);
+    };
+
+    const openEditForm = (user: User) => {
+        setEditingUser(user);
+        setFormData({
+            name: user.name,
+            email: user.email,
+            phone: user.phone || '',
+            password: '',
+            role_id: user.role?.id?.toString() || '',
+            is_active: user.is_active,
+        });
+        setFormOpen(true);
+    };
+
+    const handleFormSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSaving(true);
+        try {
+            const data: any = { ...formData, role_id: parseInt(formData.role_id) };
+            if (!data.password) delete data.password;
+            if (!data.phone) delete data.phone;
+
+            if (editingUser) {
+                await usersApi.update(editingUser.id, data);
+                toast.success('User updated successfully');
+            } else {
+                await usersApi.create(data);
+                toast.success('User created successfully');
+            }
+            setFormOpen(false);
+            fetchUsers();
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || 'Failed to save user');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     const columns: ColumnDef<User>[] = [
         {
             accessorKey: 'name',
@@ -154,7 +210,7 @@ export default function UsersIndex() {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => router.visit(`/admin/users/${row.original.id}/edit`)}>
+                        <DropdownMenuItem onClick={() => openEditForm(row.original)}>
                             <Pencil className="mr-2 h-4 w-4" />
                             Edit
                         </DropdownMenuItem>
@@ -183,7 +239,7 @@ export default function UsersIndex() {
                     title="Users"
                     description="Manage system users and their roles"
                     actions={
-                        <Button onClick={() => router.visit('/admin/users/create')}>
+                        <Button onClick={openCreateForm}>
                             <Plus className="mr-2 h-4 w-4" />
                             Add User
                         </Button>
@@ -240,6 +296,49 @@ export default function UsersIndex() {
                 confirmText="Deactivate"
                 variant="destructive"
             />
+
+            <Dialog open={formOpen} onOpenChange={setFormOpen}>
+                <DialogContent className="max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>{editingUser ? 'Edit User' : 'Create User'}</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleFormSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="name">Full Name</Label>
+                            <Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="email">Email</Label>
+                            <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="phone">Phone</Label>
+                            <Input id="phone" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="password">{editingUser ? 'Password (leave blank to keep)' : 'Password'}</Label>
+                            <Input id="password" type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required={!editingUser} minLength={8} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="role">Role</Label>
+                            <Select value={formData.role_id} onValueChange={(v) => setFormData({ ...formData, role_id: v })}>
+                                <SelectTrigger><SelectValue placeholder="Select role" /></SelectTrigger>
+                                <SelectContent>
+                                    {roles.map((r) => <SelectItem key={r.id} value={r.id.toString()}>{r.name}</SelectItem>)}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <Switch id="is_active" checked={formData.is_active} onCheckedChange={(c: boolean) => setFormData({ ...formData, is_active: c })} />
+                            <Label htmlFor="is_active">Active</Label>
+                        </div>
+                        <DialogFooter>
+                            <Button type="button" variant="outline" onClick={() => setFormOpen(false)}>Cancel</Button>
+                            <Button type="submit" disabled={isSaving}>{isSaving ? 'Saving...' : editingUser ? 'Update' : 'Create'}</Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </AppLayout>
     );
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 /**
  * @OA\Info(
@@ -40,6 +41,7 @@ use App\Http\Controllers\Controller;
  */
 abstract class ApiController extends Controller
 {
+    use AuthorizesRequests;
     protected function successResponse($data, string $message = 'Success', int $code = 200)
     {
         return response()->json([

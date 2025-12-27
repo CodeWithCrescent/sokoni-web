@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Head } from '@inertiajs/react';
-import { Edit, MoreHorizontal, Plus, RotateCcw, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Plus, RotateCcw, Trash2, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
 import AppLayout from '@/layouts/app-layout';
@@ -11,6 +11,15 @@ import { PageHeader } from '@/components/ui/page-header';
 import { BadgeStatus, BadgeDeleted } from '@/components/ui/badge-status';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from '@/components/ui/dialog';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -34,6 +43,10 @@ export default function UnitsIndex() {
     const [restoreId, setRestoreId] = useState<number | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isRestoring, setIsRestoring] = useState(false);
+    const [formOpen, setFormOpen] = useState(false);
+    const [editingUnit, setEditingUnit] = useState<Unit | null>(null);
+    const [formData, setFormData] = useState({ name: '', abbreviation: '', is_active: true });
+    const [isSaving, setIsSaving] = useState(false);
     const hasFetched = useRef(false);
 
     const fetchUnits = async () => {
@@ -90,6 +103,38 @@ export default function UnitsIndex() {
         }
     };
 
+    const openCreateForm = () => {
+        setEditingUnit(null);
+        setFormData({ name: '', abbreviation: '', is_active: true });
+        setFormOpen(true);
+    };
+
+    const openEditForm = (unit: Unit) => {
+        setEditingUnit(unit);
+        setFormData({ name: unit.name, abbreviation: unit.abbreviation, is_active: unit.is_active });
+        setFormOpen(true);
+    };
+
+    const handleFormSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSaving(true);
+        try {
+            if (editingUnit) {
+                await unitsApi.update(editingUnit.id, formData);
+                toast.success('Unit updated successfully');
+            } else {
+                await unitsApi.create(formData);
+                toast.success('Unit created successfully');
+            }
+            setFormOpen(false);
+            fetchUnits();
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || 'Failed to save unit');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     const columns: ColumnDef<Unit>[] = [
         {
             accessorKey: 'name',
@@ -135,8 +180,8 @@ export default function UnitsIndex() {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
+                        <DropdownMenuItem onClick={() => openEditForm(row.original)}>
+                            <Pencil className="mr-2 h-4 w-4" />
                             Edit
                         </DropdownMenuItem>
                         {row.original.deleted_at ? (
@@ -167,7 +212,7 @@ export default function UnitsIndex() {
                     title="Units"
                     description="Manage measurement units for products"
                     actions={
-                        <Button>
+                        <Button onClick={openCreateForm}>
                             <Plus className="mr-2 h-4 w-4" />
                             Add Unit
                         </Button>
@@ -215,6 +260,50 @@ export default function UnitsIndex() {
                     onConfirm={handleRestore}
                     isLoading={isRestoring}
                 />
+
+                <Dialog open={formOpen} onOpenChange={setFormOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>{editingUnit ? 'Edit Unit' : 'Create Unit'}</DialogTitle>
+                        </DialogHeader>
+                        <form onSubmit={handleFormSubmit} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="name">Name</Label>
+                                <Input
+                                    id="name"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    placeholder="e.g., Kilogram"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="abbreviation">Abbreviation</Label>
+                                <Input
+                                    id="abbreviation"
+                                    value={formData.abbreviation}
+                                    onChange={(e) => setFormData({ ...formData, abbreviation: e.target.value })}
+                                    placeholder="e.g., kg"
+                                    required
+                                />
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <Switch
+                                    id="is_active"
+                                    checked={formData.is_active}
+                                    onCheckedChange={(checked: boolean) => setFormData({ ...formData, is_active: checked })}
+                                />
+                                <Label htmlFor="is_active">Active</Label>
+                            </div>
+                            <DialogFooter>
+                                <Button type="button" variant="outline" onClick={() => setFormOpen(false)}>Cancel</Button>
+                                <Button type="submit" disabled={isSaving}>
+                                    {isSaving ? 'Saving...' : editingUnit ? 'Update' : 'Create'}
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
             </div>
         </AppLayout>
     );
