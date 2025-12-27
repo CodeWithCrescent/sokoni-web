@@ -52,7 +52,7 @@ class ProductController extends ApiController
 
         $products = $query->orderBy('name')->paginate($request->integer('per_page', 15));
 
-        return $this->paginatedResponse($products, ProductResource);
+        return $this->paginatedResponse($products, ProductResource::class);
     }
 
     /**

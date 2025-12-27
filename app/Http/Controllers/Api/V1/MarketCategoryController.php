@@ -44,7 +44,7 @@ class MarketCategoryController extends ApiController
 
         $categories = $query->ordered()->paginate($request->integer('per_page', 15));
 
-        return $this->paginatedResponse($categories, MarketCategoryResource);
+        return $this->paginatedResponse($categories, MarketCategoryResource::class);
     }
 
     /**

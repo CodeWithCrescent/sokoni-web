@@ -46,7 +46,7 @@ class UnitController extends ApiController
 
         $units = $query->orderBy('name')->paginate($request->integer('per_page', 15));
 
-        return $this->paginatedResponse($units, UnitResource);
+        return $this->paginatedResponse($units, UnitResource::class);
     }
 
     /**

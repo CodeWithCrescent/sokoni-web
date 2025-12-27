@@ -8,10 +8,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\ProductCategory;
 
 class Market extends Model
 {
     use Auditable, HasFactory, SoftDeletes;
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($market) {
+            if (!$market->category_id) {
+                $localMarketCategory = ProductCategory::where('slug', 'local-market')->first();
+                if ($localMarketCategory) {
+                    $market->category_id = $localMarketCategory->id;
+                }
+            }
+        });
+    }
 
     protected $fillable = [
         'category_id',

@@ -49,7 +49,7 @@ class MarketController extends ApiController
 
         $markets = $query->orderBy('name')->paginate($request->integer('per_page', 15));
 
-        return $this->paginatedResponse($markets, MarketResource);
+        return $this->paginatedResponse($markets, MarketResource::class);
     }
 
     /**

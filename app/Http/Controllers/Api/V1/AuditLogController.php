@@ -58,7 +58,7 @@ class AuditLogController extends ApiController
 
         $logs = $query->paginate($request->integer('per_page', 15));
 
-        return $this->paginatedResponse($logs, AuditLogResource);
+        return $this->paginatedResponse($logs, AuditLogResource::class);
     }
 
     /**

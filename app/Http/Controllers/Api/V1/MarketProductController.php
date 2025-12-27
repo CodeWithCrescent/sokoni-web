@@ -48,7 +48,7 @@ class MarketProductController extends ApiController
 
         $marketProducts = $query->paginate($request->integer('per_page', 15));
 
-        return $this->paginatedResponse($marketProducts, MarketProductResource);
+        return $this->paginatedResponse($marketProducts, MarketProductResource::class);
     }
 
     /**
