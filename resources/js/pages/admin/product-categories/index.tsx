@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Head } from '@inertiajs/react';
 import { Edit, MoreHorizontal, Plus, RotateCcw, Trash2 } from 'lucide-react';
@@ -34,6 +34,7 @@ export default function ProductCategoriesIndex() {
     const [restoreId, setRestoreId] = useState<number | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isRestoring, setIsRestoring] = useState(false);
+    const hasFetched = useRef(false);
 
     const fetchCategories = async () => {
         setIsLoading(true);
@@ -54,6 +55,8 @@ export default function ProductCategoriesIndex() {
     };
 
     useEffect(() => {
+        if (hasFetched.current && page === 0 && search === '') return;
+        hasFetched.current = true;
         fetchCategories();
     }, [page, search]);
 
