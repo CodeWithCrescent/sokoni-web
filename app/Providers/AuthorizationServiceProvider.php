@@ -21,6 +21,13 @@ class AuthorizationServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Allow admin users to bypass all authorization checks (including Policies)
+        Gate::before(function ($user, $ability) {
+            if ($user->isAdmin()) {
+                return true;
+            }
+        });
+
         $this->registerGates();
     }
 

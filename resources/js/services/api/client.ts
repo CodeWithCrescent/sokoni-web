@@ -14,8 +14,14 @@ const apiClient = axios.create({
 apiClient.interceptors.response.use(
     (response: AxiosResponse) => response,
     (error: AxiosError) => {
-        if (error.response?.status === 401) {
-            window.location.href = '/login';
+        // Only redirect to login if truly unauthenticated and not on an auth page
+        if (error.response?.status === 401 && !window.location.pathname.includes('/login')) {
+            // Check if user should be redirected (session expired)
+            const isApiError = error.config?.url?.startsWith('/api');
+            if (isApiError) {
+                // Let the component handle the error instead of redirecting
+                console.warn('API authentication error:', error.response?.data);
+            }
         }
         return Promise.reject(error);
     },

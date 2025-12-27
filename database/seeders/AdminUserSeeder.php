@@ -18,12 +18,12 @@ class AdminUserSeeder extends Seeder
 
         if ($adminRole) {
             User::updateOrCreate(
-                ['email' => 'admin@agizasokoni.com'],
+                ['email' => 'admin@agizasokoni.co.tz'],
                 [
                     'role_id' => $adminRole->id,
                     'name' => 'System Administrator',
-                    'email' => 'admin@agizasokoni.com',
-                    'password' => Hash::make('password'),
+                    'email' => 'admin@agizasokoni.co.tz',
+                    'password' => Hash::make('password9900'),
                     'is_active' => true,
                     'email_verified_at' => now(),
                 ]
