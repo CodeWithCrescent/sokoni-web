@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Head } from '@inertiajs/react';
-import { Edit, MoreHorizontal, Plus, RotateCcw, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Plus, RotateCcw, Trash2, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
 import AppLayout from '@/layouts/app-layout';
@@ -11,13 +11,30 @@ import { PageHeader } from '@/components/ui/page-header';
 import { BadgeStatus, BadgeDeleted } from '@/components/ui/badge-status';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from '@/components/ui/dialog';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { productsApi, Product } from '@/services/api';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { productsApi, productCategoriesApi, unitsApi, Product, ProductCategory, Unit } from '@/services/api';
 
 const breadcrumbs = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -34,6 +51,12 @@ export default function ProductsIndex() {
     const [restoreId, setRestoreId] = useState<number | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isRestoring, setIsRestoring] = useState(false);
+    const [formOpen, setFormOpen] = useState(false);
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+    const [categories, setCategories] = useState<ProductCategory[]>([]);
+    const [units, setUnits] = useState<Unit[]>([]);
+    const [formData, setFormData] = useState({ name: '', slug: '', description: '', category_id: '', unit_id: '', is_active: true });
+    const [isSaving, setIsSaving] = useState(false);
     const hasFetched = useRef(false);
 
     const fetchProducts = async () => {
@@ -43,7 +66,7 @@ export default function ProductsIndex() {
                 search,
                 page: page + 1,
                 per_page: 15,
-                with_trashed: true,
+                with_trashed: false,
             });
             setProducts(response.data.data);
             setPageCount(response.data.meta.last_page);
@@ -87,6 +110,60 @@ export default function ProductsIndex() {
         } finally {
             setIsRestoring(false);
             setRestoreId(null);
+        }
+    };
+
+    const fetchFormData = async () => {
+        try {
+            const [catRes, unitRes] = await Promise.all([productCategoriesApi.list(), unitsApi.list()]);
+            setCategories(catRes.data.data);
+            setUnits(unitRes.data.data);
+        } catch (error) {
+            toast.error('Failed to load form data');
+        }
+    };
+
+    const openCreateForm = () => {
+        setEditingProduct(null);
+        setFormData({ name: '', slug: '', description: '', category_id: '', unit_id: '', is_active: true });
+        fetchFormData();
+        setFormOpen(true);
+    };
+
+    const openEditForm = (product: Product) => {
+        setEditingProduct(product);
+        setFormData({
+            name: product.name,
+            slug: product.slug,
+            description: product.description || '',
+            category_id: product.category?.id?.toString() || '',
+            unit_id: product.unit?.id?.toString() || '',
+            is_active: product.is_active,
+        });
+        fetchFormData();
+        setFormOpen(true);
+    };
+
+    const generateSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+    const handleFormSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSaving(true);
+        try {
+            const data = { ...formData, category_id: parseInt(formData.category_id), unit_id: parseInt(formData.unit_id) };
+            if (editingProduct) {
+                await productsApi.update(editingProduct.id, data);
+                toast.success('Product updated successfully');
+            } else {
+                await productsApi.create(data);
+                toast.success('Product created successfully');
+            }
+            setFormOpen(false);
+            fetchProducts();
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || 'Failed to save product');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -149,8 +226,8 @@ export default function ProductsIndex() {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
+                        <DropdownMenuItem onClick={() => openEditForm(row.original)}>
+                            <Pencil className="mr-2 h-4 w-4" />
                             Edit
                         </DropdownMenuItem>
                         {row.original.deleted_at ? (
@@ -181,7 +258,7 @@ export default function ProductsIndex() {
                     title="Products"
                     description="Manage global products for your marketplace"
                     actions={
-                        <Button>
+                        <Button onClick={openCreateForm}>
                             <Plus className="mr-2 h-4 w-4" />
                             Add Product
                         </Button>
@@ -229,6 +306,52 @@ export default function ProductsIndex() {
                     onConfirm={handleRestore}
                     isLoading={isRestoring}
                 />
+
+                <Dialog open={formOpen} onOpenChange={setFormOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>{editingProduct ? 'Edit Product' : 'Create Product'}</DialogTitle>
+                        </DialogHeader>
+                        <form onSubmit={handleFormSubmit} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="name">Name</Label>
+                                <Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value, slug: editingProduct ? formData.slug : generateSlug(e.target.value) })} required />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="slug">Slug</Label>
+                                <Input id="slug" value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} required />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label>Category</Label>
+                                    <Select value={formData.category_id} onValueChange={(v) => setFormData({ ...formData, category_id: v })}>
+                                        <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                                        <SelectContent>{categories.map((c) => <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>)}</SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Unit</Label>
+                                    <Select value={formData.unit_id} onValueChange={(v) => setFormData({ ...formData, unit_id: v })}>
+                                        <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                                        <SelectContent>{units.map((u) => <SelectItem key={u.id} value={u.id.toString()}>{u.name}</SelectItem>)}</SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="description">Description</Label>
+                                <Textarea id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={2} />
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <Switch id="is_active" checked={formData.is_active} onCheckedChange={(c: boolean) => setFormData({ ...formData, is_active: c })} />
+                                <Label htmlFor="is_active">Active</Label>
+                            </div>
+                            <DialogFooter>
+                                <Button type="button" variant="outline" onClick={() => setFormOpen(false)}>Cancel</Button>
+                                <Button type="submit" disabled={isSaving}>{isSaving ? 'Saving...' : editingProduct ? 'Update' : 'Create'}</Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
             </div>
         </AppLayout>
     );

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Head } from '@inertiajs/react';
-import { Edit, MoreHorizontal, Plus, RotateCcw, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Plus, RotateCcw, Trash2, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
 import AppLayout from '@/layouts/app-layout';
@@ -11,6 +11,16 @@ import { PageHeader } from '@/components/ui/page-header';
 import { BadgeStatus, BadgeDeleted } from '@/components/ui/badge-status';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from '@/components/ui/dialog';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -34,7 +44,49 @@ export default function MarketsIndex() {
     const [restoreId, setRestoreId] = useState<number | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isRestoring, setIsRestoring] = useState(false);
+    const [formOpen, setFormOpen] = useState(false);
+    const [editingMarket, setEditingMarket] = useState<Market | null>(null);
+    const [formData, setFormData] = useState({ name: '', slug: '', address: '', description: '', opening_time: '06:00', closing_time: '18:00', is_active: true });
+    const [isSaving, setIsSaving] = useState(false);
     const hasFetched = useRef(false);
+
+    const openCreateForm = () => {
+        setEditingMarket(null);
+        setFormData({ name: '', slug: '', address: '', description: '', opening_time: '06:00', closing_time: '18:00', is_active: true });
+        setFormOpen(true);
+    };
+
+    const openEditForm = (market: Market) => {
+        setEditingMarket(market);
+        setFormData({
+            name: market.name, slug: market.slug, address: market.address || '',
+            description: market.description || '', opening_time: market.opening_time || '06:00',
+            closing_time: market.closing_time || '18:00', is_active: market.is_active,
+        });
+        setFormOpen(true);
+    };
+
+    const generateSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+    const handleFormSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSaving(true);
+        try {
+            if (editingMarket) {
+                await marketsApi.update(editingMarket.id, formData);
+                toast.success('Market updated successfully');
+            } else {
+                await marketsApi.create(formData);
+                toast.success('Market created successfully');
+            }
+            setFormOpen(false);
+            fetchMarkets();
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || 'Failed to save market');
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     const fetchMarkets = async () => {
         setIsLoading(true);
@@ -43,7 +95,7 @@ export default function MarketsIndex() {
                 search,
                 page: page + 1,
                 per_page: 15,
-                with_trashed: true,
+                with_trashed: false,
             });
             setMarkets(response.data.data);
             setPageCount(response.data.meta.last_page);
@@ -145,8 +197,8 @@ export default function MarketsIndex() {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
+                        <DropdownMenuItem onClick={() => openEditForm(row.original)}>
+                            <Pencil className="mr-2 h-4 w-4" />
                             Edit
                         </DropdownMenuItem>
                         {row.original.deleted_at ? (
@@ -177,7 +229,7 @@ export default function MarketsIndex() {
                     title="Markets"
                     description="Manage markets in your marketplace"
                     actions={
-                        <Button>
+                        <Button onClick={openCreateForm}>
                             <Plus className="mr-2 h-4 w-4" />
                             Add Market
                         </Button>
@@ -225,6 +277,52 @@ export default function MarketsIndex() {
                     onConfirm={handleRestore}
                     isLoading={isRestoring}
                 />
+
+                <Dialog open={formOpen} onOpenChange={setFormOpen}>
+                    <DialogContent className="max-w-lg">
+                        <DialogHeader>
+                            <DialogTitle>{editingMarket ? 'Edit Market' : 'Create Market'}</DialogTitle>
+                        </DialogHeader>
+                        <form onSubmit={handleFormSubmit} className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="name">Name</Label>
+                                    <Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value, slug: editingMarket ? formData.slug : generateSlug(e.target.value) })} required />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="slug">Slug</Label>
+                                    <Input id="slug" value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} required />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="address">Address</Label>
+                                <Input id="address" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} required />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="opening_time">Opening Time</Label>
+                                    <Input id="opening_time" type="time" value={formData.opening_time} onChange={(e) => setFormData({ ...formData, opening_time: e.target.value })} />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="closing_time">Closing Time</Label>
+                                    <Input id="closing_time" type="time" value={formData.closing_time} onChange={(e) => setFormData({ ...formData, closing_time: e.target.value })} />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="description">Description</Label>
+                                <Textarea id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={2} />
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <Switch id="is_active" checked={formData.is_active} onCheckedChange={(c: boolean) => setFormData({ ...formData, is_active: c })} />
+                                <Label htmlFor="is_active">Active</Label>
+                            </div>
+                            <DialogFooter>
+                                <Button type="button" variant="outline" onClick={() => setFormOpen(false)}>Cancel</Button>
+                                <Button type="submit" disabled={isSaving}>{isSaving ? 'Saving...' : editingMarket ? 'Update' : 'Create'}</Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
             </div>
         </AppLayout>
     );

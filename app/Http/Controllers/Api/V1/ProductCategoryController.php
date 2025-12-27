@@ -44,7 +44,7 @@ class ProductCategoryController extends ApiController
 
         $categories = $query->ordered()->paginate($request->integer('per_page', 15));
 
-        return $this->paginatedResponse($categories, ProductCategoryResource);
+        return $this->paginatedResponse($categories, ProductCategoryResource::class);
     }
 
     /**

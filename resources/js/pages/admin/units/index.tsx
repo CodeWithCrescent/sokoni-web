@@ -56,7 +56,7 @@ export default function UnitsIndex() {
                 search,
                 page: page + 1,
                 per_page: 15,
-                with_trashed: true,
+                with_trashed: false,
             });
             setUnits(response.data.data);
             setPageCount(response.data.meta.last_page);
