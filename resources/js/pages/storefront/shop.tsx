@@ -37,7 +37,7 @@ export default function Shop() {
     const [categories, setCategories] = useState<Category[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [search, setSearch] = useState('');
-    const [categoryFilter, setCategoryFilter] = useState('');
+    const [categoryFilter, setCategoryFilter] = useState('all');
 
     useEffect(() => {
         fetchCategories();
@@ -66,7 +66,7 @@ export default function Shop() {
             const response = await apiClient.get('/browse/products', {
                 params: {
                     search: search || undefined,
-                    category_id: categoryFilter || undefined,
+                    category_id: categoryFilter === 'all' ? undefined : categoryFilter,
                 },
             });
             setProducts(response.data.data || []);
@@ -123,7 +123,7 @@ export default function Shop() {
                                         <SelectValue placeholder="All Categories" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">All Categories</SelectItem>
+                                        <SelectItem value="all">All Categories</SelectItem>
                                         {categories.map((cat) => (
                                             <SelectItem key={cat.id} value={cat.id.toString()}>
                                                 {cat.name}
