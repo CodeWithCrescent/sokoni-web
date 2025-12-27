@@ -38,17 +38,49 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return Inertia::render('admin/product-categories/index');
         })->name('product-categories.index');
 
+        Route::get('product-categories/create', function () {
+            return Inertia::render('admin/product-categories/form');
+        })->name('product-categories.create');
+
+        Route::get('product-categories/{categoryId}/edit', function ($categoryId) {
+            return Inertia::render('admin/product-categories/form', ['categoryId' => (int) $categoryId]);
+        })->name('product-categories.edit');
+
         Route::get('units', function () {
             return Inertia::render('admin/units/index');
         })->name('units.index');
+
+        Route::get('units/create', function () {
+            return Inertia::render('admin/units/form');
+        })->name('units.create');
+
+        Route::get('units/{unitId}/edit', function ($unitId) {
+            return Inertia::render('admin/units/form', ['unitId' => (int) $unitId]);
+        })->name('units.edit');
 
         Route::get('products', function () {
             return Inertia::render('admin/products/index');
         })->name('products.index');
 
+        Route::get('products/create', function () {
+            return Inertia::render('admin/products/form');
+        })->name('products.create');
+
+        Route::get('products/{productId}/edit', function ($productId) {
+            return Inertia::render('admin/products/form', ['productId' => (int) $productId]);
+        })->name('products.edit');
+
         Route::get('markets', function () {
             return Inertia::render('admin/markets/index');
         })->name('markets.index');
+
+        Route::get('markets/create', function () {
+            return Inertia::render('admin/markets/form');
+        })->name('markets.create');
+
+        Route::get('markets/{marketId}/edit', function ($marketId) {
+            return Inertia::render('admin/markets/form', ['marketId' => (int) $marketId]);
+        })->name('markets.edit');
 
         Route::get('orders', function () {
             return Inertia::render('admin/orders/index');

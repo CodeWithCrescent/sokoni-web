@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Head } from '@inertiajs/react';
-import { Edit, MoreHorizontal, Plus, RotateCcw, Trash2 } from 'lucide-react';
+import { Head, router } from '@inertiajs/react';
+import { MoreHorizontal, Trash2, RotateCcw, Plus, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
 import AppLayout from '@/layouts/app-layout';
@@ -139,8 +139,8 @@ export default function ProductCategoriesIndex() {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
+                        <DropdownMenuItem onClick={() => router.visit(`/admin/product-categories/${row.original.id}/edit`)}>
+                            <Pencil className="mr-2 h-4 w-4" />
                             Edit
                         </DropdownMenuItem>
                         {row.original.deleted_at ? (
@@ -171,7 +171,7 @@ export default function ProductCategoriesIndex() {
                     title="Product Categories"
                     description="Manage product categories for your marketplace"
                     actions={
-                        <Button>
+                        <Button onClick={() => router.visit('/admin/product-categories/create')}>
                             <Plus className="mr-2 h-4 w-4" />
                             Add Category
                         </Button>
