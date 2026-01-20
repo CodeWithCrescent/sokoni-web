@@ -106,8 +106,8 @@ export default function ProductForm({ productId }: Props) {
         try {
             const data = {
                 ...formData,
-                category_id: parseInt(formData.category_id),
-                unit_id: parseInt(formData.unit_id),
+                // category_id: parseInt(formData.category_id),
+                // unit_id: parseInt(formData.unit_id),
             };
 
             if (isEdit && productId) {

@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('market_products', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('market_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('market_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('product_id')->constrained()->cascadeOnDelete();
             $table->decimal('price', 12, 2);
             $table->integer('stock')->default(0);
             $table->integer('moq')->default(1);

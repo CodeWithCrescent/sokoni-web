@@ -90,9 +90,9 @@ export default function MarketsIndex() {
         setIsSaving(true);
         try {
             const data: any = { ...formData };
-            if (data.category_id) {
-                data.category_id = parseInt(data.category_id);
-            }
+            // if (data.category_id) {
+            //     data.category_id = parseInt(data.category_id);
+            // }
             
             if (editingMarket) {
                 await marketsApi.update(editingMarket.id, data);

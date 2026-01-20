@@ -152,7 +152,10 @@ export default function ProductsIndex() {
         e.preventDefault();
         setIsSaving(true);
         try {
-            const data = { ...formData, category_id: parseInt(formData.category_id), unit_id: parseInt(formData.unit_id) };
+            const data = { ...formData, 
+                // category_id: parseInt(formData.category_id), 
+                // unit_id: parseInt(formData.unit_id) 
+            };
             if (editingProduct) {
                 await productsApi.update(editingProduct.id, data);
                 toast.success('Product updated successfully');

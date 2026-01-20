@@ -107,7 +107,7 @@ export default function MarketForm({ marketId }: Props) {
         try {
             const data: any = {
                 ...formData,
-                category_id: formData.category_id ? parseInt(formData.category_id) : undefined,
+                // category_id: formData.category_id ? parseInt(formData.category_id) : undefined,
                 latitude: formData.latitude ? parseFloat(formData.latitude) : undefined,
                 longitude: formData.longitude ? parseFloat(formData.longitude) : undefined,
             };

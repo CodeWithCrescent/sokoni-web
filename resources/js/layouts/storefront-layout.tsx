@@ -161,7 +161,7 @@ export default function StorefrontLayout({ children }: Props) {
                             <h4 className="font-medium mb-4">Contact</h4>
                             <ul className="space-y-2 text-sm text-muted-foreground">
                                 <li>Dar es Salaam, Tanzania</li>
-                                <li>+255 xxx xxx xxx</li>
+                                <li>+255 676 827 7992</li>
                                 <li>info@agizasokoni.co.tz</li>
                             </ul>
                         </div>

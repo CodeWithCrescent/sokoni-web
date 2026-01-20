@@ -20,8 +20,8 @@ return new class extends Migration
         });
 
         Schema::create('notification_preferences', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->boolean('email_order_updates')->default(true);
             $table->boolean('email_promotions')->default(true);
             $table->boolean('sms_order_updates')->default(true);

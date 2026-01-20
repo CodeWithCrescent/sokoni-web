@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('delivery_zones', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
@@ -23,8 +23,8 @@ return new class extends Migration
         });
 
         Schema::create('delivery_zone_areas', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('delivery_zone_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('delivery_zone_id')->constrained()->cascadeOnDelete();
             $table->string('area_name');
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);

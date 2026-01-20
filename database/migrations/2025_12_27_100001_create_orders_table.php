@@ -9,12 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('order_number')->unique();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('market_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('collector_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('driver_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('market_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('collector_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('driver_id')->nullable()->constrained('users')->nullOnDelete();
             $table->enum('status', [
                 'pending',
                 'confirmed',

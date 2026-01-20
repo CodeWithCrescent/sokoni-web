@@ -22,6 +22,7 @@ class AdminUserSeeder extends Seeder
                 [
                     'role_id' => $adminRole->id,
                     'name' => 'System Administrator',
+                    'slug' => 'system-administrator',
                     'email' => 'admin@agizasokoni.co.tz',
                     'password' => Hash::make('password9900'),
                     'is_active' => true,

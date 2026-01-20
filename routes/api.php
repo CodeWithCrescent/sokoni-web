@@ -26,11 +26,11 @@ Route::prefix('v1')->group(function () {
 
         // Users
         Route::apiResource('users', \App\Http\Controllers\Api\V1\UserController::class);
-        Route::post('users/{user}/restore', [\App\Http\Controllers\Api\V1\UserController::class, 'restore']);
+        Route::post('users/{user:slug}/restore', [\App\Http\Controllers\Api\V1\UserController::class, 'restore']);
 
         // Roles
         Route::apiResource('roles', \App\Http\Controllers\Api\V1\RoleController::class);
-        Route::post('roles/{role}/restore', [\App\Http\Controllers\Api\V1\RoleController::class, 'restore'])
+        Route::post('roles/{role:slug}/restore', [\App\Http\Controllers\Api\V1\RoleController::class, 'restore'])
             ->withTrashed();
 
         // Permissions
@@ -39,20 +39,20 @@ Route::prefix('v1')->group(function () {
 
         // Product Categories
         Route::apiResource('product-categories', \App\Http\Controllers\Api\V1\ProductCategoryController::class);
-        Route::post('product-categories/{product_category}/restore', [\App\Http\Controllers\Api\V1\ProductCategoryController::class, 'restore'])
+        Route::post('product-categories/{product_category:slug}/restore', [\App\Http\Controllers\Api\V1\ProductCategoryController::class, 'restore'])
             ->withTrashed();
 
         // Units
         Route::apiResource('units', \App\Http\Controllers\Api\V1\UnitController::class);
-        Route::post('units/{unit}/restore', [\App\Http\Controllers\Api\V1\UnitController::class, 'restore'])
+        Route::post('units/{unit:slug}/restore', [\App\Http\Controllers\Api\V1\UnitController::class, 'restore'])
             ->withTrashed();
 
         // Products
         Route::apiResource('products', \App\Http\Controllers\Api\V1\ProductController::class);
-        Route::post('products/{product}/restore', [\App\Http\Controllers\Api\V1\ProductController::class, 'restore'])
+        Route::post('products/{product:slug}/restore', [\App\Http\Controllers\Api\V1\ProductController::class, 'restore'])
             ->withTrashed();
-        Route::post('products/{product}/photos', [\App\Http\Controllers\Api\V1\ProductController::class, 'uploadPhoto']);
-        Route::delete('products/{product}/photos/{photo}', [\App\Http\Controllers\Api\V1\ProductController::class, 'deletePhoto']);
+        Route::post('products/{product:slug}/photos', [\App\Http\Controllers\Api\V1\ProductController::class, 'uploadPhoto']);
+        Route::delete('products/{product:slug}/photos/{photo}', [\App\Http\Controllers\Api\V1\ProductController::class, 'deletePhoto']);
 
         // Upload
         Route::post('upload/image', [\App\Http\Controllers\Api\V1\UploadController::class, 'uploadImage']);
@@ -60,12 +60,12 @@ Route::prefix('v1')->group(function () {
 
         // Market Categories
         Route::apiResource('market-categories', \App\Http\Controllers\Api\V1\MarketCategoryController::class);
-        Route::post('market-categories/{market_category}/restore', [\App\Http\Controllers\Api\V1\MarketCategoryController::class, 'restore'])
+        Route::post('market-categories/{market_category:slug}/restore', [\App\Http\Controllers\Api\V1\MarketCategoryController::class, 'restore'])
             ->withTrashed();
 
         // Markets
         Route::apiResource('markets', \App\Http\Controllers\Api\V1\MarketController::class);
-        Route::post('markets/{market}/restore', [\App\Http\Controllers\Api\V1\MarketController::class, 'restore'])
+        Route::post('markets/{market:slug}/restore', [\App\Http\Controllers\Api\V1\MarketController::class, 'restore'])
             ->withTrashed();
 
         // Market Products (Pricing)
@@ -80,15 +80,15 @@ Route::prefix('v1')->group(function () {
         // Orders
         Route::get('orders/my-orders', [\App\Http\Controllers\Api\V1\OrderController::class, 'myOrders']);
         Route::apiResource('orders', \App\Http\Controllers\Api\V1\OrderController::class)->only(['index', 'store', 'show']);
-        Route::put('orders/{order}/status', [\App\Http\Controllers\Api\V1\OrderController::class, 'updateStatus']);
-        Route::post('orders/{order}/assign-collector', [\App\Http\Controllers\Api\V1\OrderController::class, 'assignCollector']);
-        Route::post('orders/{order}/assign-driver', [\App\Http\Controllers\Api\V1\OrderController::class, 'assignDriver']);
+        Route::put('orders/{order:order_number}/status', [\App\Http\Controllers\Api\V1\OrderController::class, 'updateStatus']);
+        Route::post('orders/{order:order_number}/assign-collector', [\App\Http\Controllers\Api\V1\OrderController::class, 'assignCollector']);
+        Route::post('orders/{order:order_number}/assign-driver', [\App\Http\Controllers\Api\V1\OrderController::class, 'assignDriver']);
 
         // Payments
         Route::post('payments/initiate', [\App\Http\Controllers\Api\V1\PaymentController::class, 'initiate']);
         Route::get('payments/{payment}', [\App\Http\Controllers\Api\V1\PaymentController::class, 'show']);
         Route::post('payments/{payment}/confirm', [\App\Http\Controllers\Api\V1\PaymentController::class, 'confirmCashPayment']);
-        Route::get('payments/order/{orderId}', [\App\Http\Controllers\Api\V1\PaymentController::class, 'forOrder']);
+        Route::get('payments/order/{orderNumber}', [\App\Http\Controllers\Api\V1\PaymentController::class, 'forOrder']);
 
         // Cart
         Route::get('cart', [\App\Http\Controllers\Api\V1\CartController::class, 'index']);
@@ -130,13 +130,13 @@ Route::prefix('v1')->group(function () {
     // Payment callback (public)
     Route::post('payments/callback', [\App\Http\Controllers\Api\V1\PaymentController::class, 'callback']);
 
-    // Public browsing API for customers
-    Route::prefix('browse')->group(function () {
+        // Public browsing API for customers
+        Route::prefix('browse')->group(function () {
         Route::get('products', [\App\Http\Controllers\Api\V1\BrowseController::class, 'products']);
-        Route::get('products/{product}', [\App\Http\Controllers\Api\V1\BrowseController::class, 'product']);
+        Route::get('products/{product:slug}', [\App\Http\Controllers\Api\V1\BrowseController::class, 'product']);
         Route::get('markets', [\App\Http\Controllers\Api\V1\BrowseController::class, 'markets']);
-        Route::get('markets/{market}', [\App\Http\Controllers\Api\V1\BrowseController::class, 'market']);
-        Route::get('markets/{market}/products', [\App\Http\Controllers\Api\V1\BrowseController::class, 'marketProducts']);
+        Route::get('markets/{market:slug}', [\App\Http\Controllers\Api\V1\BrowseController::class, 'market']);
+        Route::get('markets/{market:slug}/products', [\App\Http\Controllers\Api\V1\BrowseController::class, 'marketProducts']);
         Route::get('categories', [\App\Http\Controllers\Api\V1\BrowseController::class, 'categories']);
     });
 });

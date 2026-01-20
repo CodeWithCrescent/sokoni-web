@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Traits\Auditable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +14,7 @@ use App\Models\MarketCategory;
 
 class Market extends Model
 {
-    use Auditable, HasFactory, SoftDeletes;
+    use Auditable, HasFactory, SoftDeletes, HasUuids;
 
     protected static function boot()
     {
@@ -25,7 +27,31 @@ class Market extends Model
                     $market->category_id = $localMarketCategory->id;
                 }
             }
+            
+            if (empty($market->slug)) {
+                $market->slug = static::generateUniqueSlug($market->name);
+            }
         });
+
+        static::updating(function ($market) {
+            if ($market->isDirty('name') && empty($market->slug)) {
+                $market->slug = static::generateUniqueSlug($market->name);
+            }
+        });
+    }
+
+    public static function generateUniqueSlug(string $name): string
+    {
+        $slug = Str::slug($name);
+        $originalSlug = $slug;
+        $counter = 1;
+
+        while (static::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
     }
 
     protected $fillable = [
@@ -71,6 +97,11 @@ class Market extends Model
         return $this->belongsToMany(Product::class, 'market_products')
             ->withPivot(['price', 'stock', 'moq', 'is_available'])
             ->withTimestamps();
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 
     public function scopeActive($query)

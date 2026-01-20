@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\Auditable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Role extends Model
 {
-    use Auditable, HasFactory, SoftDeletes;
+    use Auditable, HasFactory, SoftDeletes, HasUuids;
 
     protected $fillable = [
         'name',
@@ -25,6 +26,11 @@ class Role extends Model
         return [
             'is_default' => 'boolean',
         ];
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 
     public function permissions(): BelongsToMany

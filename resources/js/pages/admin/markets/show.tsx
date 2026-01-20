@@ -111,7 +111,7 @@ export default function MarketShow({ market }: Props) {
             const data: any = {
                 ...formData,
                 market_id: market.id,
-                product_id: parseInt(formData.product_id),
+                // product_id: parseInt(formData.product_id),
                 price: parseFloat(formData.price),
                 stock: parseInt(formData.stock) || 0,
                 moq: parseInt(formData.moq) || 1,

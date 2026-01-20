@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('market_product_prices', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('market_product_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('market_product_id')->constrained()->cascadeOnDelete();
             $table->integer('min_qty');
             $table->integer('max_qty')->nullable();
             $table->decimal('price', 12, 2);

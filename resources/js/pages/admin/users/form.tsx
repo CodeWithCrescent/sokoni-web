@@ -84,7 +84,8 @@ export default function UserForm({ userId }: Props) {
                 name: formData.name,
                 email: formData.email,
                 phone: formData.phone || undefined,
-                role_id: parseInt(formData.role_id),
+                // role_id: parseInt(formData.role_id),
+                role_id: formData.role_id,
                 is_active: formData.is_active,
             };
 
