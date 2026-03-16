@@ -1,4 +1,9 @@
-## SOKONI WEB SYSTEM FOR SANJO
+    ## SOKONI WEB SYSTEM FOR SANJO
+
+Create .env
+```bash
+cp .env.example .env
+```
 
 Make DB Seeder
 ```bash
