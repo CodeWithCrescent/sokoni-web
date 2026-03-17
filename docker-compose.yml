@@ -6,7 +6,7 @@ services:
     container_name: sokoni_web
     restart: unless-stopped
     ports:
-      - "8800:8800"
+      - "8800:80"
     volumes:
       - ./database:/var/www/html/database
       - ./storage:/var/www/html/storage
