@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 echo "Starting application setup..."
 
@@ -29,13 +28,14 @@ fi
 
 # Run migrations
 echo "Running migrations..."
-php artisan migrate --force || true
+php artisan migrate --force 2>&1 || echo "Migration failed or already up to date"
 
-# Clear and cache config
-echo "Optimizing application..."
-php artisan config:clear
-php artisan cache:clear
-php artisan view:clear
+# Clear caches
+echo "Clearing caches..."
+php artisan config:clear 2>&1 || echo "Config clear failed"
+php artisan cache:clear 2>&1 || echo "Cache clear failed"
+php artisan view:clear 2>&1 || echo "View clear failed"
+php artisan route:clear 2>&1 || echo "Route clear failed"
 
 echo "Starting services..."
 exec /usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisord.conf
