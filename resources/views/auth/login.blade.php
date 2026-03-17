@@ -88,7 +88,7 @@
                             </div>
                         </form>
 
-                        <div class="mt-6">
+                        <!-- <div class="mt-6">
                             <div class="relative">
                                 <div class="absolute inset-0 flex items-center">
                                     <div class="w-full border-t border-lime-700"></div>
@@ -112,7 +112,7 @@
                                     <span>LinkedIn</span>
                                 </a>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="p-6 bg-green-900/70 backdrop-blur-xl border-t border-green-800 rounded-b-2xl">
                         <p class="text-sm text-center text-green-300">
