@@ -86,7 +86,7 @@ class DashboardController extends Controller
         
         // Handle case where vendor relationship doesn't exist
         if (!$vendor) {
-            abort(403, 'Vendor profile not found. Please contact administrator.');
+            return $this->genericDashboard('Vendor profile not setup. Please contact administrator.');
         }
 
         $stats = [
@@ -144,7 +144,7 @@ class DashboardController extends Controller
         
         // Handle case where customer relationship doesn't exist
         if (!$customer) {
-            abort(403, 'Customer profile not found. Please contact administrator.');
+            return $this->genericDashboard('Customer profile not setup. Please contact administrator.');
         }
 
         $stats = [
@@ -177,7 +177,7 @@ class DashboardController extends Controller
         
         // Handle case where delivery personnel relationship doesn't exist
         if (!$delivery) {
-            abort(403, 'Delivery personnel profile not found. Please contact administrator.');
+            return $this->genericDashboard('Delivery personnel profile not setup. Please contact administrator.');
         }
 
         $stats = [
@@ -214,5 +214,13 @@ class DashboardController extends Controller
         ];
 
         return view('dashboards.delivery', compact('delivery', 'stats', 'active_deliveries', 'recent_deliveries', 'monthly_stats'));
+    }
+    
+    private function genericDashboard($message = null)
+    {
+        $user = Auth::user();
+        $errorMessage = $message ?? 'Your profile is not fully configured.';
+        
+        return view('dashboard', compact('user', 'errorMessage'));
     }
 }
