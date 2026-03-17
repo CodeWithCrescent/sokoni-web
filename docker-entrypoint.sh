@@ -34,13 +34,21 @@ if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "" ]; then
     echo "Application key generated successfully"
 fi
 
+# Ensure database directory and file have proper permissions
+echo "Setting database permissions..."
+# SQLite needs write access to the directory for journal/lock files
+chown -R www-data:www-data /var/www/html/database
+chmod -R 775 /var/www/html/database
+
 # Ensure database file exists
 if [ ! -f /var/www/html/database/database.sqlite ]; then
     echo "Creating database file..."
     touch /var/www/html/database/database.sqlite
-    chown www-data:www-data /var/www/html/database/database.sqlite
-    chmod 664 /var/www/html/database/database.sqlite
 fi
+
+# Set database file permissions
+chown www-data:www-data /var/www/html/database/database.sqlite
+chmod 664 /var/www/html/database/database.sqlite
 
 # Run migrations
 echo "Running migrations..."
