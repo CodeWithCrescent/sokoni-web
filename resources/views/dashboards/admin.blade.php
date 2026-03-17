@@ -228,7 +228,7 @@
         <div class="bg-slate-800/40 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-sm font-medium text-gray-400">Vendors</h3>
-                <a href="{{ route('vendors.index') }}" class="text-blue-400 hover:text-blue-300">
+                <a href="{{ route('markets.index') }}" class="text-blue-400 hover:text-blue-300">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                     </svg>

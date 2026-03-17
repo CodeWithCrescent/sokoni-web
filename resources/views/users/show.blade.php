@@ -142,7 +142,7 @@
                 case 'vendor':
                     $hasProfile = $user->vendor !== null;
                     $profileType = 'Vendor';
-                    $profileLink = $hasProfile ? route('vendors.show', $user->vendor) : route('vendors.create');
+                    $profileLink = $hasProfile ? route('markets.show', $user->vendor) : route('markets.create');
                     break;
                 case 'customer':
                     $hasProfile = $user->customer !== null;

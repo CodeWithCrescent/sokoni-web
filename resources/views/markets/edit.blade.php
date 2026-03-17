@@ -11,7 +11,7 @@
                 <h1 class="text-2xl font-bold text-blue-400">Edit Vendor</h1>
                 <p class="mt-1 text-sm text-gray-400">Update vendor information</p>
             </div>
-            <a href="{{ route('vendors.show', $vendor) }}" class="inline-flex items-center px-4 py-2 bg-slate-700 border border-slate-600 rounded-md font-semibold text-xs text-gray-300 uppercase tracking-widest hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-500 transition">
+            <a href="{{ route('markets.show', $vendor) }}" class="inline-flex items-center px-4 py-2 bg-slate-700 border border-slate-600 rounded-md font-semibold text-xs text-gray-300 uppercase tracking-widest hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-500 transition">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>
@@ -22,7 +22,7 @@
 
     <!-- Form Card -->
     <div class="bg-slate-800/40 backdrop-blur-sm rounded-lg shadow-lg border border-slate-700 p-6">
-        <form action="{{ route('vendors.update', $vendor) }}" method="POST">
+        <form action="{{ route('markets.update', $vendor) }}" method="POST">
             @csrf
             @method('PUT')
 
@@ -163,7 +163,7 @@
             <!-- Form Actions -->
             <div class="mt-8 flex items-center justify-between pt-6 border-t border-slate-700">
                 @if($vendor->products()->count() === 0)
-                <form action="{{ route('vendors.destroy', $vendor) }}" method="POST" class="inline-block">
+                <form action="{{ route('markets.destroy', $vendor) }}" method="POST" class="inline-block">
                     @csrf
                     @method('DELETE')
                     <button type="button" onclick="if(confirm('Are you sure you want to delete this vendor? This action cannot be undone.')) this.closest('form').submit();" class="px-6 py-2.5 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition">
@@ -180,7 +180,7 @@
                 @endif
 
                 <div class="flex space-x-3">
-                    <a href="{{ route('vendors.show', $vendor) }}" class="px-6 py-2.5 bg-slate-700 text-gray-300 rounded-md hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-500 transition">
+                    <a href="{{ route('markets.show', $vendor) }}" class="px-6 py-2.5 bg-slate-700 text-gray-300 rounded-md hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-500 transition">
                         Cancel
                     </a>
                     <button type="submit" class="px-6 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
