@@ -7,9 +7,9 @@
 <div class="space-y-6">
     <!-- Header with action buttons -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-        <h1 class="text-2xl font-bold text-lime-400">Products Management</h1>
+        <h1 class="text-2xl font-bold text-blue-400">Products Management</h1>
         <div class="mt-4 md:mt-0">
-            <a href="{{ route('products.create') }}" class="inline-flex items-center px-4 py-2 bg-lime-500 border border-transparent rounded-md font-semibold text-xs text-green-950 uppercase tracking-widest hover:bg-lime-400 focus:bg-lime-400 active:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            <a href="{{ route('products.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-500 focus:bg-blue-500 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
                 <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
@@ -19,9 +19,9 @@
     </div>
 
     <!-- Filters Card -->
-    <div class="bg-green-900/40 backdrop-blur-sm rounded-lg shadow-lg border border-green-800 p-4">
+    <div class="bg-slate-800/40 backdrop-blur-sm rounded-lg shadow-lg border border-slate-700 p-4">
         <div class="w-full">
-            <button onclick="toggleFilters()" class="flex items-center justify-between w-full text-left text-lime-400 font-medium">
+            <button onclick="toggleFilters()" class="flex items-center justify-between w-full text-left text-blue-400 font-medium">
                 <span class="flex items-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
@@ -44,7 +44,7 @@
                                 name="search" 
                                 id="search" 
                                 value="{{ request('search') }}"
-                                class="block w-full rounded-md border-0 py-2 pl-3 pr-10 text-gray-300 bg-green-950/60 placeholder:text-gray-500 focus:ring-2 focus:ring-lime-500 focus:border-lime-500 sm:text-sm" 
+                                class="block w-full rounded-md border-0 py-2 pl-3 pr-10 text-gray-300 bg-slate-900/60 placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
                                 placeholder="Product name or description..."
                             >
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -58,7 +58,7 @@
                     <!-- Category Filter -->
                     <div class="space-y-2">
                         <label for="category" class="block text-sm font-medium text-gray-300">Category</label>
-                        <select name="category_id" id="category" class="block w-full rounded-md border-0 py-2 text-gray-300 bg-green-950/60 focus:ring-2 focus:ring-lime-500 focus:border-lime-500 sm:text-sm">
+                        <select name="category_id" id="category" class="block w-full rounded-md border-0 py-2 text-gray-300 bg-slate-900/60 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             <option value="">All Categories</option>
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -71,7 +71,7 @@
                     <!-- Vendor Filter -->
                     <div class="space-y-2">
                         <label for="vendor" class="block text-sm font-medium text-gray-300">Vendor</label>
-                        <select name="vendor_id" id="vendor" class="block w-full rounded-md border-0 py-2 text-gray-300 bg-green-950/60 focus:ring-2 focus:ring-lime-500 focus:border-lime-500 sm:text-sm">
+                        <select name="vendor_id" id="vendor" class="block w-full rounded-md border-0 py-2 text-gray-300 bg-slate-900/60 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             <option value="">All Vendors</option>
                             @foreach($vendors as $vendor)
                                 <option value="{{ $vendor->id }}" {{ request('vendor_id') == $vendor->id ? 'selected' : '' }}>
@@ -92,7 +92,7 @@
                                     value="{{ request('min_price') }}" 
                                     min="0" 
                                     placeholder="Min" 
-                                    class="block w-full rounded-md border-0 py-2 text-gray-300 bg-green-950/60 placeholder:text-gray-500 focus:ring-2 focus:ring-lime-500 focus:border-lime-500 sm:text-sm"
+                                    class="block w-full rounded-md border-0 py-2 text-gray-300 bg-slate-900/60 placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                 >
                             </div>
                             <div>
@@ -102,7 +102,7 @@
                                     value="{{ request('max_price') }}" 
                                     min="0" 
                                     placeholder="Max" 
-                                    class="block w-full rounded-md border-0 py-2 text-gray-300 bg-green-950/60 placeholder:text-gray-500 focus:ring-2 focus:ring-lime-500 focus:border-lime-500 sm:text-sm"
+                                    class="block w-full rounded-md border-0 py-2 text-gray-300 bg-slate-900/60 placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                 >
                             </div>
                         </div>
@@ -111,7 +111,7 @@
                     <!-- Sort Options -->
                     <div class="space-y-2">
                         <label for="sort_by" class="block text-sm font-medium text-gray-300">Sort By</label>
-                        <select name="sort_by" id="sort_by" class="block w-full rounded-md border-0 py-2 text-gray-300 bg-green-950/60 focus:ring-2 focus:ring-lime-500 focus:border-lime-500 sm:text-sm">
+                        <select name="sort_by" id="sort_by" class="block w-full rounded-md border-0 py-2 text-gray-300 bg-slate-900/60 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             <option value="created_at" {{ request('sort_by', 'created_at') == 'created_at' ? 'selected' : '' }}>Date Added</option>
                             <option value="name" {{ request('sort_by') == 'name' ? 'selected' : '' }}>Name</option>
                             <option value="price" {{ request('sort_by') == 'price' ? 'selected' : '' }}>Price</option>
@@ -121,7 +121,7 @@
                     <!-- Sort Direction -->
                     <div class="space-y-2">
                         <label for="sort_dir" class="block text-sm font-medium text-gray-300">Sort Direction</label>
-                        <select name="sort_dir" id="sort_dir" class="block w-full rounded-md border-0 py-2 text-gray-300 bg-green-950/60 focus:ring-2 focus:ring-lime-500 focus:border-lime-500 sm:text-sm">
+                        <select name="sort_dir" id="sort_dir" class="block w-full rounded-md border-0 py-2 text-gray-300 bg-slate-900/60 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             <option value="asc" {{ request('sort_dir') == 'asc' ? 'selected' : '' }}>Ascending</option>
                             <option value="desc" {{ request('sort_dir', 'desc') == 'desc' ? 'selected' : '' }}>Descending</option>
                         </select>
@@ -130,7 +130,7 @@
                     <!-- Per Page -->
                     <div class="space-y-2">
                         <label for="per_page" class="block text-sm font-medium text-gray-300">Items Per Page</label>
-                        <select name="per_page" id="per_page" class="block w-full rounded-md border-0 py-2 text-gray-300 bg-green-950/60 focus:ring-2 focus:ring-lime-500 focus:border-lime-500 sm:text-sm">
+                        <select name="per_page" id="per_page" class="block w-full rounded-md border-0 py-2 text-gray-300 bg-slate-900/60 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             <option value="15" {{ request('per_page', 15) == 15 ? 'selected' : '' }}>15</option>
                             <option value="30" {{ request('per_page') == 30 ? 'selected' : '' }}>30</option>
                             <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
@@ -140,10 +140,10 @@
 
                     <!-- Filter Actions -->
                     <div class="flex items-end space-x-3 col-span-1 md:col-span-2 lg:col-span-4">
-                        <button type="submit" class="flex-1 px-4 py-2 bg-lime-600 text-white rounded-md hover:bg-lime-500 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 transition-colors">
+                        <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
                             Apply Filters
                         </button>
-                        <a href="{{ route('products.index') }}" class="flex-1 px-4 py-2 bg-green-800 text-center text-gray-300 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
+                        <a href="{{ route('products.index') }}" class="flex-1 px-4 py-2 bg-slate-700 text-center text-gray-300 rounded-md hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition-colors">
                             Reset Filters
                         </a>
                     </div>
@@ -154,12 +154,12 @@
 
     <!-- Active Filters Summary -->
     @if(request('search') || request('category_id') || request('vendor_id') || request('min_price') || request('max_price'))
-        <div class="bg-green-800/40 backdrop-blur-sm rounded-lg p-3 flex flex-wrap items-center gap-2">
+        <div class="bg-slate-800/40 backdrop-blur-sm rounded-lg p-3 flex flex-wrap items-center gap-2">
             <span class="text-sm font-medium text-gray-300">Active filters:</span>
             
             @if(request('search'))
-                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-900 text-gray-300">
-                    Search: <span class="ml-1 text-lime-400">{{ request('search') }}</span>
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-700 text-gray-300">
+                    Search: <span class="ml-1 text-blue-400">{{ request('search') }}</span>
                     <a href="{{ request()->url() . '?' . http_build_query(request()->except('search')) }}" class="ml-1 text-gray-400 hover:text-white">
                         <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -169,8 +169,8 @@
             @endif
             
             @if(request('category_id'))
-                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-900 text-gray-300">
-                    Category: <span class="ml-1 text-lime-400">{{ $categories->firstWhere('id', request('category_id'))->name }}</span>
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-700 text-gray-300">
+                    Category: <span class="ml-1 text-blue-400">{{ $categories->firstWhere('id', request('category_id'))->name }}</span>
                     <a href="{{ request()->url() . '?' . http_build_query(request()->except('category_id')) }}" class="ml-1 text-gray-400 hover:text-white">
                         <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -180,8 +180,8 @@
             @endif
             
             @if(request('vendor_id'))
-                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-900 text-gray-300">
-                    Vendor: <span class="ml-1 text-lime-400">{{ $vendors->firstWhere('id', request('vendor_id'))->name }}</span>
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-700 text-gray-300">
+                    Vendor: <span class="ml-1 text-blue-400">{{ $vendors->firstWhere('id', request('vendor_id'))->name }}</span>
                     <a href="{{ request()->url() . '?' . http_build_query(request()->except('vendor_id')) }}" class="ml-1 text-gray-400 hover:text-white">
                         <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -191,9 +191,9 @@
             @endif
             
             @if(request('min_price') || request('max_price'))
-                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-900 text-gray-300">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-700 text-gray-300">
                     Price: 
-                    <span class="ml-1 text-lime-400">
+                    <span class="ml-1 text-blue-400">
                         @if(request('min_price') && request('max_price'))
                             ${{ request('min_price') }} - ${{ request('max_price') }}
                         @elseif(request('min_price'))
@@ -216,24 +216,24 @@
     @if(count($products) > 0)
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @foreach($products as $product)
-                <div class="bg-green-900/40 backdrop-blur-sm rounded-lg overflow-hidden border border-green-800 hover:shadow-lg hover:shadow-lime-800/20 transition-all hover-glow">
-                    <div class="relative pb-[70%] bg-green-950/80">
+                <div class="bg-slate-800/40 backdrop-blur-sm rounded-lg overflow-hidden border border-slate-700 hover:shadow-lg hover:shadow-blue-500/20 transition-all hover-glow">
+                    <div class="relative pb-[70%] bg-slate-900/80">
                         <img src="{{ $product->image ?? 'https://via.placeholder.com/300x210?text=No+Image' }}" 
                              alt="{{ $product->name }}" 
                              class="absolute inset-0 w-full h-full object-cover">
                         <div class="absolute top-2 right-2 flex space-x-1">
                             @if($product->is_featured)
-                                <span class="bg-yellow-500 text-xs font-bold uppercase py-1 px-2 rounded text-green-950">
+                                <span class="bg-yellow-500 text-xs font-bold uppercase py-1 px-2 rounded text-slate-900">
                                     Featured
                                 </span>
                             @endif
                             @if($product->stock <= 5 && $product->stock > 0)
-                                <span class="bg-amber-500 text-xs font-bold uppercase py-1 px-2 rounded text-green-950">
+                                <span class="bg-amber-500 text-xs font-bold uppercase py-1 px-2 rounded text-slate-900">
                                     Low Stock
                                 </span>
                             @endif
                             @if($product->stock === 0)
-                                <span class="bg-red-500 text-xs font-bold uppercase py-1 px-2 rounded text-green-950">
+                                <span class="bg-red-500 text-xs font-bold uppercase py-1 px-2 rounded text-white">
                                     Out of Stock
                                 </span>
                             @endif
@@ -243,7 +243,7 @@
                     <div class="p-4 space-y-3">
                         <div class="flex justify-between items-start">
                             <h3 class="text-lg font-semibold text-white truncate">{{ $product->name }}</h3>
-                            <span class="text-lime-400 font-bold">${{ number_format($product->price, 2) }}</span>
+                            <span class="text-blue-400 font-bold">${{ number_format($product->price, 2) }}</span>
                         </div>
                         
                         <div class="flex items-center text-xs text-gray-400">
@@ -257,7 +257,7 @@
                         <div class="flex items-center justify-between pt-2">
                             <span class="text-xs text-gray-400">Stock: {{ $product->stock }}</span>
                             <div class="flex space-x-2">
-                                <a href="{{ route('products.edit', $product->id) }}" class="p-1 text-gray-300 hover:text-lime-400 transition-colors">
+                                <a href="{{ route('products.edit', $product->id) }}" class="p-1 text-gray-300 hover:text-blue-400 transition-colors">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                     </svg>
@@ -279,14 +279,14 @@
         </div>
     @else
         <!-- Empty State -->
-        <div class="bg-green-900/40 backdrop-blur-sm rounded-lg p-8 text-center">
+        <div class="bg-slate-800/40 backdrop-blur-sm rounded-lg p-8 text-center">
             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
             </svg>
-            <h3 class="mt-4 text-lg font-medium text-lime-400">No products found</h3>
+            <h3 class="mt-4 text-lg font-medium text-blue-400">No products found</h3>
             <p class="mt-2 text-sm text-gray-300">Try adjusting your search or filter criteria to find what you're looking for.</p>
             <div class="mt-6">
-                <a href="{{ route('products.create') }}" class="inline-flex items-center px-4 py-2 bg-lime-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-lime-500 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                <a href="{{ route('products.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
                     Add New Product
                 </a>
             </div>
@@ -295,15 +295,15 @@
 
     <!-- Pagination -->
     @if($products->hasPages())
-        <div class="bg-green-900/40 backdrop-blur-sm rounded-lg p-3 flex flex-col sm:flex-row justify-between items-center">
+        <div class="bg-slate-800/40 backdrop-blur-sm rounded-lg p-3 flex flex-col sm:flex-row justify-between items-center">
             <div class="text-sm text-gray-400 mb-3 sm:mb-0">
-                Showing <span class="font-medium text-lime-400">{{ $products->firstItem() }}</span> to <span class="font-medium text-lime-400">{{ $products->lastItem() }}</span> of <span class="font-medium text-lime-400">{{ $products->total() }}</span> products
+                Showing <span class="font-medium text-blue-400">{{ $products->firstItem() }}</span> to <span class="font-medium text-blue-400">{{ $products->lastItem() }}</span> of <span class="font-medium text-blue-400">{{ $products->total() }}</span> products
             </div>
             
             <div class="flex space-x-1">
                 {{ $products->appends(request()->except('page'))->links('pagination.tailwind', ['colors' => [
-                    'active' => 'bg-lime-600 text-white',
-                    'inactive' => 'text-gray-300 hover:bg-green-800 hover:text-white',
+                    'active' => 'bg-blue-600 text-white',
+                    'inactive' => 'text-gray-300 hover:bg-slate-700 hover:text-white',
                     'disabled' => 'opacity-50 cursor-not-allowed text-gray-300',
                 ]]) }}
             </div>
@@ -318,8 +318,8 @@
 
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-        <div id="modal-content" class="inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full glass-effect border border-green-800">
-            <div class="bg-green-900/80 backdrop-blur-md px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div id="modal-content" class="inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full glass-effect border border-slate-700">
+            <div class="bg-slate-800/80 backdrop-blur-md px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div class="sm:flex sm:items-start">
                     <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                         <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -327,16 +327,16 @@
                         </svg>
                     </div>
                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                        <h3 class="text-lg leading-6 font-medium text-lime-400" id="modal-title">Delete Product</h3>
+                        <h3 class="text-lg leading-6 font-medium text-blue-400" id="modal-title">Delete Product</h3>
                         <div class="mt-2">
                             <p class="text-sm text-gray-300">Are you sure you want to delete this product? This action cannot be undone and all associated data will be permanently removed from our servers.</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="bg-green-900/60 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <div class="bg-slate-800/60 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button id="confirm-delete-btn" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">Delete</button>
-                <button onclick="closeDeleteModal()" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-green-700 shadow-sm px-4 py-2 bg-green-800 text-base font-medium text-gray-300 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">Cancel</button>
+                <button onclick="closeDeleteModal()" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-600 shadow-sm px-4 py-2 bg-slate-700 text-base font-medium text-gray-300 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">Cancel</button>
             </div>
         </div>
     </div>
@@ -408,13 +408,13 @@ function showNotification(message, type = 'info') {
     // Style based on notification type
     switch(type) {
         case 'success':
-            notification.classList.add('bg-lime-500', 'text-green-950');
+            notification.classList.add('bg-blue-500', 'text-white');
             break;
         case 'error':
             notification.classList.add('bg-red-500', 'text-white');
             break;
         case 'warning':
-            notification.classList.add('bg-amber-500', 'text-green-950');
+            notification.classList.add('bg-amber-500', 'text-slate-900');
             break;
         default: // info
             notification.classList.add('bg-blue-500', 'text-white');
@@ -438,7 +438,7 @@ function showNotification(message, type = 'info') {
             </div>
             <div class="ml-auto pl-3">
                 <div class="-mx-1.5 -my-1.5">
-                    <button onclick="this.parentElement.parentElement.parentElement.parentElement.remove()" class="inline-flex rounded-md p-1.5 hover:bg-opacity-20 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-800">
+                    <button onclick="this.parentElement.parentElement.parentElement.parentElement.remove()" class="inline-flex rounded-md p-1.5 hover:bg-opacity-20 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -494,10 +494,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const productCards = document.querySelectorAll('.hover-glow');
     productCards.forEach(card => {
         card.addEventListener('mouseenter', function() {
-            this.classList.add('shadow-lg', 'shadow-lime-800/30');
+            this.classList.add('shadow-lg', 'shadow-blue-500/30');
         });
         card.addEventListener('mouseleave', function() {
-            this.classList.remove('shadow-lg', 'shadow-lime-800/30');
+            this.classList.remove('shadow-lg', 'shadow-blue-500/30');
         });
     });
 });

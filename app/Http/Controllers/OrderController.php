@@ -21,7 +21,7 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         $query = Order::with(['customer.user', 'deliveryPersonnel.user', 'orderDetails']);
         
@@ -60,18 +60,38 @@ class OrderController extends Controller
         
         $orders = $query->paginate($request->per_page ?? 15);
         
-        return response()->json([
-            'status' => 'success',
-            'data' => $orders
-        ]);
+        if ($request->wantsJson() || $request->is('api/*')) {
+            return response()->json([
+                'status' => 'success',
+                'data' => $orders
+            ]);
+        }
+        
+        return view('orders.index', compact('orders'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        return view('orders.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreOrderRequest $request): JsonResponse
+    public function store(Request $request)
     {
-        $validated = $request->validated();
+        $validated = $request->validate([
+            'customer_id' => 'required|exists:customers,id',
+            'delivery_id' => 'nullable|exists:delivery_personnel,id',
+            'delivery_address' => 'nullable|string',
+            'products' => 'required|array|min:1',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.quantity' => 'required|integer|min:1',
+            'products.*.price' => 'required|numeric|min:0',
+        ]);
         
         DB::beginTransaction();
         
@@ -80,9 +100,10 @@ class OrderController extends Controller
             $order = Order::create([
                 'customer_id' => $validated['customer_id'],
                 'delivery_id' => $validated['delivery_id'] ?? null,
+                'delivery_address' => $validated['delivery_address'] ?? null,
                 'order_date' => now(),
                 'status' => 'pending',
-                'total_amount' => 0, // Will calculate this after adding products
+                'total_amount' => 0,
             ]);
             
             $totalAmount = 0;
@@ -92,7 +113,7 @@ class OrderController extends Controller
                 $product = Product::findOrFail($productData['product_id']);
                 
                 // Check stock availability
-                if ($product->stock_quantity < $productData['quantity']) {
+                if ($product->stock < $productData['quantity']) {
                     throw new \Exception("Insufficient stock for product: {$product->name}");
                 }
                 
@@ -101,14 +122,14 @@ class OrderController extends Controller
                     'order_id' => $order->id,
                     'product_id' => $product->id,
                     'quantity' => $productData['quantity'],
-                    'price' => $product->price, // Use current price from the product
+                    'price' => $productData['price'],
                 ]);
                 
-                // Update stock quantity
-                $product->decrement('stock_quantity', $productData['quantity']);
+                // Update stock
+                $product->decrement('stock', $productData['quantity']);
                 
                 // Add to total
-                $totalAmount += ($product->price * $productData['quantity']);
+                $totalAmount += ($productData['price'] * $productData['quantity']);
             }
             
             // Update order total
@@ -116,82 +137,107 @@ class OrderController extends Controller
             
             DB::commit();
             
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Order created successfully',
-                'data' => $order->load(['customer.user', 'deliveryPersonnel.user', 'orderDetails.product'])
-            ], Response::HTTP_CREATED);
+            if ($request->wantsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Order created successfully',
+                    'data' => $order->load(['customer.user', 'deliveryPersonnel.user', 'orderDetails.product'])
+                ], Response::HTTP_CREATED);
+            }
+            
+            return redirect()->route('orders.show', $order)
+                ->with('success', 'Order created successfully');
             
         } catch (\Exception $e) {
             DB::rollBack();
             
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to create order',
-                'error' => $e->getMessage()
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            if ($request->wantsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Failed to create order',
+                    'error' => $e->getMessage()
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+            
+            return back()->withInput()
+                ->with('error', 'Failed to create order: ' . $e->getMessage());
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Order $order): JsonResponse
+    public function show(Request $request, Order $order)
     {
-        return response()->json([
-            'status' => 'success',
-            'data' => $order->load([
-                'customer.user', 
-                'deliveryPersonnel.user', 
-                'orderDetails.product'
-            ])
+        $order->load([
+            'customer.user', 
+            'deliveryPersonnel.user', 
+            'orderDetails.product.category'
         ]);
+        
+        if ($request->wantsJson() || $request->is('api/*')) {
+            return response()->json([
+                'status' => 'success',
+                'data' => $order
+            ]);
+        }
+        
+        return view('orders.show', compact('order'));
+    }
+    
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Order $order)
+    {
+        $order->load(['customer.user', 'deliveryPersonnel.user', 'orderDetails.product']);
+        return view('orders.edit', compact('order'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateOrderRequest $request, Order $order): JsonResponse
+    public function update(Request $request, Order $order)
     {
-        $validated = $request->validated();
-        
-        // Only allow updating certain fields
-        $orderData = [];
-        
-        if (isset($validated['delivery_id'])) {
-            $orderData['delivery_id'] = $validated['delivery_id'];
-        }
-        
-        if (isset($validated['status'])) {
-            $orderData['status'] = $validated['status'];
-        }
-        
-        if (!empty($orderData)) {
-            $order->update($orderData);
-        }
-        
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Order updated successfully',
-            'data' => $order->fresh([
-                'customer.user', 
-                'deliveryPersonnel.user', 
-                'orderDetails.product'
-            ])
+        $validated = $request->validate([
+            'status' => 'nullable|in:pending,processing,delivered,cancelled',
+            'delivery_id' => 'nullable|exists:delivery_personnel,id',
+            'delivery_address' => 'nullable|string',
         ]);
+        
+        $order->update($validated);
+        
+        if ($request->wantsJson() || $request->is('api/*')) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Order updated successfully',
+                'data' => $order->fresh([
+                    'customer.user', 
+                    'deliveryPersonnel.user', 
+                    'orderDetails.product'
+                ])
+            ]);
+        }
+        
+        return redirect()->route('orders.show', $order)
+            ->with('success', 'Order updated successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Order $order): JsonResponse
+    public function destroy(Request $request, Order $order)
     {
-        // Only allow cancellation, not actual deletion for orders
+        // Only allow cancellation for pending orders
         if ($order->status !== 'pending') {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Only pending orders can be cancelled'
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            if ($request->wantsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Only pending orders can be cancelled'
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            
+            return back()->with('error', 'Only pending orders can be cancelled');
         }
         
         DB::beginTransaction();
@@ -202,24 +248,33 @@ class OrderController extends Controller
             
             // Return products to inventory
             foreach ($order->orderDetails as $detail) {
-                $detail->product->increment('stock_quantity', $detail->quantity);
+                $detail->product->increment('stock', $detail->quantity);
             }
             
             DB::commit();
             
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Order cancelled successfully'
-            ]);
+            if ($request->wantsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Order cancelled successfully'
+                ]);
+            }
+            
+            return redirect()->route('orders.index')
+                ->with('success', 'Order cancelled successfully');
             
         } catch (\Exception $e) {
             DB::rollBack();
             
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to cancel order',
-                'error' => $e->getMessage()
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            if ($request->wantsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Failed to cancel order',
+                    'error' => $e->getMessage()
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+            
+            return back()->with('error', 'Failed to cancel order: ' . $e->getMessage());
         }
     }
 }
