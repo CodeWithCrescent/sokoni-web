@@ -20,13 +20,18 @@ chmod -R 775 /var/www/html/bootstrap/cache
 
 # Ensure .env is writable
 if [ -f /var/www/html/.env ]; then
-    chmod 664 /var/www/html/.env
+    chmod 666 /var/www/html/.env
+else
+    echo "ERROR: .env file not found!"
+    exit 1
 fi
 
-# Generate APP_KEY if not set
-if ! grep -q "^APP_KEY=base64:" /var/www/html/.env 2>/dev/null; then
+# Generate APP_KEY if not set or empty
+APP_KEY=$(grep "^APP_KEY=" /var/www/html/.env | cut -d '=' -f2)
+if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "" ]; then
     echo "Generating application key..."
     php artisan key:generate --force
+    echo "Application key generated successfully"
 fi
 
 # Ensure database file exists
@@ -41,12 +46,14 @@ fi
 echo "Running migrations..."
 php artisan migrate --force 2>&1 || echo "Migration failed or already up to date"
 
-# Clear caches
-echo "Clearing caches..."
-php artisan config:clear 2>&1 || echo "Config clear failed"
-php artisan cache:clear 2>&1 || echo "Cache clear failed"
-php artisan view:clear 2>&1 || echo "View clear failed"
-php artisan route:clear 2>&1 || echo "Route clear failed"
+# Clear and optimize caches
+echo "Optimizing application..."
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+php artisan route:clear
+php artisan config:cache
+php artisan route:cache
 
 echo "Starting services..."
 exec /usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisord.conf
