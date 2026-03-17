@@ -3,12 +3,12 @@
 namespace Database\Factories;
 
 use App\Models\User;
-use App\Models\Vendor;
+use App\Models\Market;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class VendorFactory extends Factory
+class MarketFactory extends Factory
 {
-    protected $model = Vendor::class;
+    protected $model = Market::class;
 
     public function definition(): array
     {

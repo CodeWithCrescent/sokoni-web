@@ -6,7 +6,7 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\Category;
-use App\Models\Vendor;
+use App\Models\Market;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -23,11 +23,11 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::with(['category', 'vendor.user']);
+        $query = Product::with(['category', 'market.user']);
         
-        // If user is a vendor, only show their products
+        // If user is a market, only show their products
         if (Auth::user()->role->name === 'vendor') {
-            $query->where('vendor_id', Auth::user()->vendor->id);
+            $query->where('user_id', Auth::user()->market->id);
         }
         
         // Search
@@ -40,9 +40,9 @@ class ProductController extends Controller
             $query->where('category_id', $request->category);
         }
         
-        // Filter by vendor (admin only)
-        if ($request->filled('vendor') && Auth::user()->role->name === 'admin') {
-            $query->where('vendor_id', $request->vendor);
+        // Filter by market (admin only)
+        if ($request->filled('market') && Auth::user()->role->name === 'admin') {
+            $query->where('user_id', $request->market);
         }
         
         if ($request->filled('max_price')) {
@@ -77,9 +77,9 @@ class ProductController extends Controller
         
         // For web interface
         $categories = Category::all();
-        $vendors = Vendor::all();
+        $markets = Market::all();
         
-        return view('products.index', compact('products', 'categories', 'vendors'));
+        return view('products.index', compact('products', 'categories', 'markets'));
     }
 
     /**
@@ -90,9 +90,9 @@ class ProductController extends Controller
     public function create(): View
     {
         $categories = Category::all();
-        $vendors = Vendor::all();
+        $markets = Market::all();
         
-        return view('products.create', compact('categories', 'vendors'));
+        return view('products.create', compact('categories', 'markets'));
     }
 
     /**
@@ -105,9 +105,9 @@ class ProductController extends Controller
     {
         $validated = $request->validated();
         
-        // If user is vendor, automatically set vendor_id
+        // If user is market owner, automatically set user_id
         if (Auth::user()->role->name === 'vendor') {
-            $validated['vendor_id'] = Auth::user()->vendor->id;
+            $validated['user_id'] = Auth::user()->market->id;
         }
         
         $product = Product::create($validated);
@@ -116,7 +116,7 @@ class ProductController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Product created successfully',
-                'data' => $product->load(['vendor', 'category'])
+                'data' => $product->load(['market', 'category'])
             ], Response::HTTP_CREATED);
         }
         
@@ -135,7 +135,7 @@ class ProductController extends Controller
         if ($request->wantsJson() || $request->is('api/*')) {
             return response()->json([
                 'status' => 'success',
-                'data' => $product->load(['vendor', 'category'])
+                'data' => $product->load(['market', 'category'])
             ]);
         }
         
@@ -150,15 +150,15 @@ class ProductController extends Controller
      */
     public function edit(Product $product): View
     {
-        // Check vendor ownership
-        if (Auth::user()->role->name === 'vendor' && $product->vendor_id !== Auth::user()->vendor->id) {
+        // Check market ownership
+        if (Auth::user()->role->name === 'vendor' && $product->user_id !== Auth::user()->market->id) {
             abort(403, 'You do not have permission to edit this product.');
         }
         
         $categories = Category::all();
-        $vendors = Vendor::all();
+        $markets = Market::all();
         
-        return view('products.edit', compact('product', 'categories', 'vendors'));
+        return view('products.edit', compact('product', 'categories', 'markets'));
     }
 
     /**
@@ -170,26 +170,25 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        // Check vendor ownership
-        if (Auth::user()->role->name === 'vendor' && $product->vendor_id !== Auth::user()->vendor->id) {
+        // Check market ownership
+        if (Auth::user()->role->name === 'vendor' && $product->user_id !== Auth::user()->market->id) {
             if ($request->wantsJson() || $request->is('api/*')) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You do not have permission to update this product.'
                 ], Response::HTTP_FORBIDDEN);
             }
-            return redirect()->route('products.index')
-                ->with('error', 'You do not have permission to update this product.');
+            
+            abort(403, 'You do not have permission to update this product.');
         }
         
-        $validated = $request->validated();
-        $product->update($validated);
+        $product->update($request->validated());
         
         if ($request->wantsJson() || $request->is('api/*')) {
             return response()->json([
                 'status' => 'success',
                 'message' => 'Product updated successfully',
-                'data' => $product->fresh(['vendor', 'category'])
+                'data' => $product->fresh(['market', 'category'])
             ]);
         }
         
@@ -206,13 +205,25 @@ class ProductController extends Controller
      */
     public function destroy(Request $request, Product $product)
     {
-        // Check vendor ownership
-        if (Auth::user()->role->name === 'vendor' && $product->vendor_id !== Auth::user()->vendor->id) {
+        // Check market ownership
+        if (Auth::user()->role->name === 'vendor' && $product->user_id !== Auth::user()->market->id) {
             if ($request->wantsJson() || $request->is('api/*')) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You do not have permission to delete this product.'
                 ], Response::HTTP_FORBIDDEN);
+            }
+            
+            return back()->with('error', 'You do not have permission to delete this product.');
+        }
+        
+        // Check if product has orders
+        if ($product->orderDetails()->exists()) {
+            if ($request->wantsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Cannot delete product with existing orders'
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
             
             return back()->with('error', 'Cannot delete product with existing orders');

@@ -80,11 +80,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the vendor profile associated with the user.
+     * Get the market profile associated with the user.
      */
-    public function vendor(): HasOne
+    public function market(): HasOne
     {
-        return $this->hasOne(Vendor::class, 'id');
+        return $this->hasOne(Market::class, 'id', 'id');
     }
 
     /**

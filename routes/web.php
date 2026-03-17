@@ -4,12 +4,12 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeliveryPersonnelController;
+use App\Http\Controllers\MarketController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\VendorController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -55,9 +55,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('customers', CustomerController::class);
     });
     
-    // Vendors - Admin only
+    // Markets - Admin only
     Route::middleware('role:admin')->group(function () {
-        Route::resource('vendors', VendorController::class);
+        Route::resource('markets', MarketController::class);
     });
     
     // Delivery Personnel - Admin only

@@ -2,33 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreVendorRequest;
-use App\Http\Requests\UpdateVendorRequest;
+use App\Http\Requests\StoreMarketRequest;
+use App\Http\Requests\UpdateMarketRequest;
 use App\Models\Role;
 use App\Models\User;
-use App\Models\Vendor;
+use App\Models\Market;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class VendorController extends Controller
+class MarketController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $vendors = Vendor::with(['user', 'products'])->withCount('products')->paginate(15);
+        $markets = Market::with(['user', 'products'])->withCount('products')->paginate(15);
         
         if ($request->wantsJson() || $request->is('api/*')) {
             return response()->json([
                 'status' => 'success',
-                'data' => $vendors
+                'data' => $markets
             ]);
         }
         
-        return view('vendors.index', compact('vendors'));
+        return view('markets.index', compact('markets'));
     }
 
     /**
@@ -36,7 +36,7 @@ class VendorController extends Controller
      */
     public function create()
     {
-        return view('vendors.create');
+        return view('markets.create');
     }
 
     /**
@@ -56,8 +56,8 @@ class VendorController extends Controller
         DB::beginTransaction();
         
         try {
-            // Get vendor role ID
-            $vendorRoleId = Role::where('name', 'vendor')->first()->id;
+            // Get market role ID
+            $marketRoleId = Role::where('name', 'vendor')->first()->id;
             
             // Create user first
             $user = User::create([
@@ -65,11 +65,11 @@ class VendorController extends Controller
                 'email' => $validated['email'],
                 'phone_number' => $validated['phone'] ?? null,
                 'password' => Hash::make($validated['password']),
-                'role_id' => $vendorRoleId,
+                'role_id' => $marketRoleId,
             ]);
             
-            // Then create vendor profile
-            $vendor = Vendor::create([
+            // Then create market profile
+            $market = Market::create([
                 'id' => $user->id,
                 'address' => $validated['address'] ?? null,
                 'business_name' => $validated['business_name'] ?? null,
@@ -80,16 +80,16 @@ class VendorController extends Controller
             if ($request->wantsJson() || $request->is('api/*')) {
                 return response()->json([
                     'status' => 'success',
-                    'message' => 'Vendor created successfully',
+                    'message' => 'Market created successfully',
                     'data' => [
-                        'vendor' => $vendor,
+                        'market' => $market,
                         'user' => $user,
                     ]
                 ], Response::HTTP_CREATED);
             }
             
-            return redirect()->route('vendors.index')
-                ->with('success', 'Vendor created successfully');
+            return redirect()->route('markets.index')
+                ->with('success', 'Market created successfully');
             
         } catch (\Exception $e) {
             DB::rollBack();
@@ -97,50 +97,50 @@ class VendorController extends Controller
             if ($request->wantsJson() || $request->is('api/*')) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Failed to create vendor',
+                    'message' => 'Failed to create market',
                     'error' => $e->getMessage()
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
             
             return back()->withInput()
-                ->with('error', 'Failed to create vendor: ' . $e->getMessage());
+                ->with('error', 'Failed to create market: ' . $e->getMessage());
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, Vendor $vendor)
+    public function show(Request $request, Market $market)
     {
-        $vendor->load(['user', 'products']);
+        $market->load(['user', 'products']);
         
         if ($request->wantsJson() || $request->is('api/*')) {
             return response()->json([
                 'status' => 'success',
-                'data' => $vendor
+                'data' => $market
             ]);
         }
         
-        return view('vendors.show', compact('vendor'));
+        return view('markets.show', compact('market'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Vendor $vendor)
+    public function edit(Market $market)
     {
-        $vendor->load('user');
-        return view('vendors.edit', compact('vendor'));
+        $market->load('user');
+        return view('markets.edit', compact('market'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Vendor $vendor)
+    public function update(Request $request, Market $market)
     {
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|unique:users,email,' . $vendor->user->id,
+            'email' => 'sometimes|email|unique:users,email,' . $market->user->id,
             'password' => 'nullable|string|min:8',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
@@ -158,16 +158,16 @@ class VendorController extends Controller
             if (isset($validated['password'])) $userData['password'] = Hash::make($validated['password']);
             
             if (!empty($userData)) {
-                $vendor->user->update($userData);
+                $market->user->update($userData);
             }
             
-            // Update vendor profile
-            $vendorData = [];
-            if (isset($validated['address'])) $vendorData['address'] = $validated['address'];
-            if (isset($validated['business_name'])) $vendorData['business_name'] = $validated['business_name'];
+            // Update market profile
+            $marketData = [];
+            if (isset($validated['address'])) $marketData['address'] = $validated['address'];
+            if (isset($validated['business_name'])) $marketData['business_name'] = $validated['business_name'];
             
-            if (!empty($vendorData)) {
-                $vendor->update($vendorData);
+            if (!empty($marketData)) {
+                $market->update($marketData);
             }
             
             DB::commit();
@@ -175,13 +175,13 @@ class VendorController extends Controller
             if ($request->wantsJson() || $request->is('api/*')) {
                 return response()->json([
                     'status' => 'success',
-                    'message' => 'Vendor updated successfully',
-                    'data' => $vendor->fresh(['user'])
+                    'message' => 'Market updated successfully',
+                    'data' => $market->fresh(['user'])
                 ]);
             }
             
-            return redirect()->route('vendors.show', $vendor)
-                ->with('success', 'Vendor updated successfully');
+            return redirect()->route('markets.show', $market)
+                ->with('success', 'Market updated successfully');
             
         } catch (\Exception $e) {
             DB::rollBack();
@@ -189,53 +189,53 @@ class VendorController extends Controller
             if ($request->wantsJson() || $request->is('api/*')) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Failed to update vendor',
+                    'message' => 'Failed to update market',
                     'error' => $e->getMessage()
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
             
             return back()->withInput()
-                ->with('error', 'Failed to update vendor: ' . $e->getMessage());
+                ->with('error', 'Failed to update market: ' . $e->getMessage());
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Vendor $vendor)
+    public function destroy(Request $request, Market $market)
     {
-        // Check if vendor has products
-        if ($vendor->products()->exists()) {
+        // Check if market has products
+        if ($market->products()->exists()) {
             if ($request->wantsJson() || $request->is('api/*')) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Cannot delete vendor with existing products'
+                    'message' => 'Cannot delete market with existing products'
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
             
-            return back()->with('error', 'Cannot delete vendor with existing products');
+            return back()->with('error', 'Cannot delete market with existing products');
         }
         
         DB::beginTransaction();
         
         try {
-            // Delete the vendor profile
-            $vendor->delete();
+            // Delete the market profile
+            $market->delete();
             
             // Delete the user record
-            $vendor->user->delete();
+            $market->user->delete();
             
             DB::commit();
             
             if ($request->wantsJson() || $request->is('api/*')) {
                 return response()->json([
                     'status' => 'success',
-                    'message' => 'Vendor deleted successfully'
+                    'message' => 'Market deleted successfully'
                 ]);
             }
             
-            return redirect()->route('vendors.index')
-                ->with('success', 'Vendor deleted successfully');
+            return redirect()->route('markets.index')
+                ->with('success', 'Market deleted successfully');
             
         } catch (\Exception $e) {
             DB::rollBack();
@@ -243,12 +243,12 @@ class VendorController extends Controller
             if ($request->wantsJson() || $request->is('api/*')) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Failed to delete vendor',
+                    'message' => 'Failed to delete market',
                     'error' => $e->getMessage()
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
             
-            return back()->with('error', 'Failed to delete vendor: ' . $e->getMessage());
+            return back()->with('error', 'Failed to delete market: ' . $e->getMessage());
         }
     }
 }

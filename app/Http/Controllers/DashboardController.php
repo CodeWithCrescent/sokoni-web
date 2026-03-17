@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\DeliveryPersonnel;
+use App\Models\Market;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -34,7 +34,7 @@ class DashboardController extends Controller
             'total_products' => Product::count(),
             'total_orders' => Order::count(),
             'total_customers' => Customer::count(),
-            'total_vendors' => Vendor::count(),
+            'total_markets' => Market::count(),
             'total_delivery_personnel' => DeliveryPersonnel::count(),
             'total_categories' => Category::count(),
             

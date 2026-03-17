@@ -5,12 +5,12 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\DeliveryPersonnel;
+use App\Models\Market;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\Role;
 use App\Models\User;
-use App\Models\Vendor;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -38,13 +38,13 @@ class DatabaseSeeder extends Seeder
             ]);
         }
         
-        // Vendors
-        $vendorUsers = User::factory()->count(3)->create([
+        // Markets
+        $marketUsers = User::factory()->count(3)->create([
             'role_id' => Role::where('name', 'vendor')->first()->id,
         ]);
         
-        foreach ($vendorUsers as $user) {
-            Vendor::factory()->create([
+        foreach ($marketUsers as $user) {
+            Market::factory()->create([
                 'id' => $user->id,
             ]);
         }
@@ -63,13 +63,13 @@ class DatabaseSeeder extends Seeder
         // Create categories
         Category::factory(4)->create();
         
-        // Create products for each vendor
-        $vendors = Vendor::all();
+        // Create products for each market
+        $markets = Market::all();
         $categories = Category::all();
         
-        foreach ($vendors as $vendor) {
+        foreach ($markets as $market) {
             Product::factory()->count(3)->create([
-                'user_id' => $vendor->id,
+                'user_id' => $market->id,
                 'category_id' => $categories->random()->id,
             ]);
         }

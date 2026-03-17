@@ -9,7 +9,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateVendorRequest extends FormRequest
+class UpdateMarketRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -35,7 +35,7 @@ class UpdateVendorRequest extends FormRequest
                 'string',
                 'email',
                 'max:100',
-                Rule::unique('users')->ignore($this->vendor->id),
+                Rule::unique('users')->ignore($this->market->id),
             ],
             'phone' => 'sometimes|nullable|string|max:20',
             'password' => 'sometimes|required|string|min:8',

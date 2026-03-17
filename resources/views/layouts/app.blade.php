@@ -152,11 +152,11 @@
                             <span class="mx-4 font-medium">Customers</span>
                         </a>
 
-                        <a href="{{ route('vendors.index') }}" class="flex items-center px-4 py-3 text-gray-300 transition-colors rounded-lg hover:bg-slate-800/60 hover:text-blue-400 hover-glow {{ request()->routeIs('vendors.*') ? 'menu-item-active text-blue-400' : '' }}">
+                        <a href="{{ route('markets.index') }}" class="flex items-center px-4 py-3 text-gray-300 transition-colors rounded-lg hover:bg-slate-800/60 hover:text-blue-400 hover-glow {{ request()->routeIs('markets.*') ? 'menu-item-active text-blue-400' : '' }}">
                             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
-                            <span class="mx-4 font-medium">Vendors</span>
+                            <span class="mx-4 font-medium">Markets</span>
                         </a>
 
                         <a href="{{ route('delivery-personnel.index') }}" class="flex items-center px-4 py-3 text-gray-300 transition-colors rounded-lg hover:bg-slate-800/60 hover:text-blue-400 hover-glow {{ request()->routeIs('delivery-personnel.*') ? 'menu-item-active text-blue-400' : '' }}">

@@ -30,11 +30,11 @@ class Product extends Model
     ];
 
     /**
-     * Get the vendor that owns the product.
+     * Get the market that owns the product.
      */
-    public function vendor(): BelongsTo
+    public function market(): BelongsTo
     {
-        return $this->belongsTo(Vendor::class, 'user_id');
+        return $this->belongsTo(Market::class, 'user_id');
     }
 
     /**

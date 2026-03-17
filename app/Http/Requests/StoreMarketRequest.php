@@ -1,14 +1,14 @@
 <?php
 /**
  * Command to create this request:
- * php artisan make:request StoreVendorRequest
+ * php artisan make:request StoreMarketRequest
  */
 
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreVendorRequest extends FormRequest
+class StoreMarketRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

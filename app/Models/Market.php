@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Vendor extends Model
+class Market extends Model
 {
     use HasFactory;
+
+    protected $table = 'vendors';
 
     protected $fillable = ['id', 'address'];
 
@@ -28,7 +30,7 @@ class Vendor extends Model
     public $incrementing = false;
 
     /**
-     * Get the user that owns the vendor profile.
+     * Get the user that owns the market profile.
      */
     public function user(): BelongsTo
     {
@@ -36,7 +38,7 @@ class Vendor extends Model
     }
 
     /**
-     * Get the products for the vendor.
+     * Get the products for the market.
      */
     public function products(): HasMany
     {
