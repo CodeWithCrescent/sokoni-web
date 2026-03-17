@@ -66,10 +66,15 @@ class DashboardController extends Controller
             ->get();
 
         // Monthly revenue chart data (last 6 months)
+        $dbDriver = config('database.default');
+        $dateFormat = $dbDriver === 'sqlite' 
+            ? DB::raw("strftime('%Y-%m', order_date) as month")
+            : DB::raw("DATE_FORMAT(order_date, '%Y-%m') as month");
+            
         $monthly_revenue = Order::where('status', 'delivered')
             ->where('order_date', '>=', now()->subMonths(6))
             ->select(
-                DB::raw('DATE_FORMAT(order_date, "%Y-%m") as month'),
+                $dateFormat,
                 DB::raw('SUM(total_amount) as revenue'),
                 DB::raw('COUNT(*) as orders')
             )

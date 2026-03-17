@@ -3,6 +3,10 @@
 @section('title', 'Dashboard')
 
 @section('content')
+@php
+    $userRole = Auth::user()->role->name ?? null;
+@endphp
+
 <div class="space-y-6">
     <!-- Welcome Header -->
     <div>
@@ -11,7 +15,7 @@
             @if(isset($errorMessage))
                 {{ $errorMessage }}
             @else
-                Here's what's happening with your store today.
+                Here's your dashboard overview.
             @endif
         </p>
     </div>
@@ -30,9 +34,31 @@
             </div>
         </div>
     </div>
+    
+    @else
+    <!-- Welcome Message for users with profiles -->
+    <div class="bg-blue-500/10 border border-blue-500/50 rounded-lg p-6">
+        <div class="flex items-start space-x-3">
+            <svg class="w-6 h-6 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div>
+                <h3 class="text-lg font-semibold text-blue-400">Dashboard Access</h3>
+                <p class="mt-1 text-sm text-gray-300">
+                    You're logged in as <strong>{{ ucfirst($userRole) }}</strong>. 
+                    @if($userRole === 'admin')
+                        You have full system access.
+                    @else
+                        Your dashboard features are loading.
+                    @endif
+                </p>
+            </div>
+        </div>
+    </div>
     @endif
 
-    <!-- Stats Grid -->
+    @if($userRole === 'admin')
+    <!-- Stats Grid for Admin Only -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Total Products -->
         <div class="bg-slate-800/40 backdrop-blur-sm rounded-lg border border-slate-700 p-6 hover:shadow-lg hover:shadow-blue-500/10 transition-all">
@@ -115,7 +141,7 @@
         </div>
     </div>
 
-    <!-- Quick Actions -->
+    <!-- Quick Actions for Admin -->
     <div class="bg-slate-800/40 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
         <h2 class="text-lg font-semibold text-white mb-4">Quick Actions</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -176,5 +202,17 @@
             @endforelse
         </div>
     </div>
+    @endif
+
+    @if(in_array($userRole, ['vendor', 'customer', 'delivery']) && !isset($errorMessage))
+    <!-- Role-specific placeholder (shouldn't normally see this) -->
+    <div class="bg-slate-800/40 backdrop-blur-sm rounded-lg border border-slate-700 p-8 text-center">
+        <svg class="w-16 h-16 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <h3 class="text-xl font-semibold text-white mb-2">Dashboard Ready</h3>
+        <p class="text-gray-400">Your {{ ucfirst($userRole) }} dashboard is being prepared.</p>
+    </div>
+    @endif
 </div>
 @endsection
