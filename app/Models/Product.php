@@ -34,7 +34,7 @@ class Product extends Model
      */
     public function vendor(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Vendor::class, 'user_id');
     }
 
     /**
