@@ -18,6 +18,17 @@ chown -R www-data:www-data /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/storage
 chmod -R 775 /var/www/html/bootstrap/cache
 
+# Ensure .env is writable
+if [ -f /var/www/html/.env ]; then
+    chmod 664 /var/www/html/.env
+fi
+
+# Generate APP_KEY if not set
+if ! grep -q "^APP_KEY=base64:" /var/www/html/.env 2>/dev/null; then
+    echo "Generating application key..."
+    php artisan key:generate --force
+fi
+
 # Ensure database file exists
 if [ ! -f /var/www/html/database/database.sqlite ]; then
     echo "Creating database file..."
