@@ -8,6 +8,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use Illuminate\Support\Facades\Route;
 
@@ -62,6 +63,11 @@ Route::middleware('auth')->group(function () {
     // Delivery Personnel - Admin only
     Route::middleware('role:admin')->group(function () {
         Route::resource('delivery-personnel', DeliveryPersonnelController::class);
+    });
+    
+    // Users - Admin only
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('users', UserController::class);
     });
 });
 
