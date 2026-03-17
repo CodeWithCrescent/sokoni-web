@@ -83,6 +83,11 @@ class DashboardController extends Controller
     private function vendorDashboard()
     {
         $vendor = Auth::user()->vendor;
+        
+        // Handle case where vendor relationship doesn't exist
+        if (!$vendor) {
+            abort(403, 'Vendor profile not found. Please contact administrator.');
+        }
 
         $stats = [
             'total_products' => $vendor->products()->count(),
@@ -136,6 +141,11 @@ class DashboardController extends Controller
     private function customerDashboard()
     {
         $customer = Auth::user()->customer;
+        
+        // Handle case where customer relationship doesn't exist
+        if (!$customer) {
+            abort(403, 'Customer profile not found. Please contact administrator.');
+        }
 
         $stats = [
             'total_orders' => $customer->orders()->count(),
@@ -164,6 +174,11 @@ class DashboardController extends Controller
     private function deliveryDashboard()
     {
         $delivery = Auth::user()->deliveryPersonnel;
+        
+        // Handle case where delivery personnel relationship doesn't exist
+        if (!$delivery) {
+            abort(403, 'Delivery personnel profile not found. Please contact administrator.');
+        }
 
         $stats = [
             'total_deliveries' => $delivery->orders()->count(),
