@@ -42,6 +42,6 @@ RUN composer install --optimize-autoloader --no-interaction \
     && npm install \
     && npm run build
 
-EXPOSE 8800
+EXPOSE 80
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
