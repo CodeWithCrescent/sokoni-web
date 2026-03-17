@@ -22,21 +22,26 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::with(['vendor', 'category']);
+        $query = Product::with(['category', 'vendor.user']);
         
-        // Filter by category if provided
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
+        // If user is a vendor, only show their products
+        if (Auth::user()->role->name === 'vendor') {
+            $query->where('vendor_id', Auth::user()->vendor->id);
         }
         
-        // Filter by vendor if provided
-        if ($request->filled('vendor_id')) {
-            $query->where('user_id', $request->vendor_id);
+        // Search
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
         }
         
-        // Price range filter
-        if ($request->filled('min_price')) {
-            $query->where('price', '>=', $request->min_price);
+        // Filter by category
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+        
+        // Filter by vendor (admin only)
+        if ($request->filled('vendor') && Auth::user()->role->name === 'admin') {
+            $query->where('vendor_id', $request->vendor);
         }
         
         if ($request->filled('max_price')) {
@@ -98,6 +103,12 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         $validated = $request->validated();
+        
+        // If user is vendor, automatically set vendor_id
+        if (Auth::user()->role->name === 'vendor') {
+            $validated['vendor_id'] = Auth::user()->vendor->id;
+        }
+        
         $product = Product::create($validated);
         
         if ($request->wantsJson() || $request->is('api/*')) {
@@ -138,6 +149,11 @@ class ProductController extends Controller
      */
     public function edit(Product $product): View
     {
+        // Check vendor ownership
+        if (Auth::user()->role->name === 'vendor' && $product->vendor_id !== Auth::user()->vendor->id) {
+            abort(403, 'You do not have permission to edit this product.');
+        }
+        
         $categories = Category::all();
         $vendors = Vendor::all();
         
@@ -153,6 +169,18 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
+        // Check vendor ownership
+        if (Auth::user()->role->name === 'vendor' && $product->vendor_id !== Auth::user()->vendor->id) {
+            if ($request->wantsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You do not have permission to update this product.'
+                ], Response::HTTP_FORBIDDEN);
+            }
+            return redirect()->route('products.index')
+                ->with('error', 'You do not have permission to update this product.');
+        }
+        
         $validated = $request->validated();
         $product->update($validated);
         
@@ -177,13 +205,13 @@ class ProductController extends Controller
      */
     public function destroy(Request $request, Product $product)
     {
-        // Check if product has order details
-        if ($product->orderDetails()->exists()) {
+        // Check vendor ownership
+        if (Auth::user()->role->name === 'vendor' && $product->vendor_id !== Auth::user()->vendor->id) {
             if ($request->wantsJson() || $request->is('api/*')) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Cannot delete product with existing orders'
-                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                    'message' => 'You do not have permission to delete this product.'
+                ], Response::HTTP_FORBIDDEN);
             }
             
             return back()->with('error', 'Cannot delete product with existing orders');
